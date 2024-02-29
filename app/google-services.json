@@ -1,0 +1,105 @@
+{
+  "project_info": {
+    "project_number": "896100739759",
+    "project_id": "debora-1b03a",
+    "storage_bucket": "debora-1b03a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896100739759:android:c08ac75b14a30f0e90025a",
+        "android_client_info": {
+          "package_name": "com.mel.debora_v10"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpaHNLPorfJ6RVroWkqlHe2TCnkfjcwZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896100739759:android:65d5994591c4b4c490025a",
+        "android_client_info": {
+          "package_name": "com.mel.debora_v11"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpaHNLPorfJ6RVroWkqlHe2TCnkfjcwZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896100739759:android:693f47d86b12ce9890025a",
+        "android_client_info": {
+          "package_name": "com.mel.debora_v2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpaHNLPorfJ6RVroWkqlHe2TCnkfjcwZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896100739759:android:783b9410f1fdc84890025a",
+        "android_client_info": {
+          "package_name": "com.mel.debora_v4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpaHNLPorfJ6RVroWkqlHe2TCnkfjcwZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896100739759:android:7b36fe651e42469a90025a",
+        "android_client_info": {
+          "package_name": "com.mel.debora_v8"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpaHNLPorfJ6RVroWkqlHe2TCnkfjcwZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
