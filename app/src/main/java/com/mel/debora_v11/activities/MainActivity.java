@@ -6,12 +6,15 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.google.ai.client.generativeai.Chat;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentChange;
@@ -21,8 +24,14 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.mel.debora_v11.R;
 import com.mel.debora_v11.adapters.ChatAdapter;
 import com.mel.debora_v11.databinding.ActivityMainBinding;
+import com.mel.debora_v11.fragments.AccountFragment;
+import com.mel.debora_v11.fragments.ChatFragment;
+import com.mel.debora_v11.fragments.HistoryFragment;
+import com.mel.debora_v11.fragments.HomeFragment;
+import com.mel.debora_v11.fragments.RoutineFragment;
 import com.mel.debora_v11.models.ChatMessage;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
@@ -59,6 +68,46 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
 
 
+        // fragments
+        binding.bottomNavigationView.setBackground(null);
+        replaceFragment(new HomeFragment());
+
+        }
+
+        private void replaceFragment(Fragment fragment){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, fragment);
+            fragmentTransaction.commit();
+        }
+
+    private void setListeners(){
+//        binding.signOutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                signOut();
+//            }
+//        });
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.home) {
+                replaceFragment(new HomeFragment());
+            }
+            else if(item.getItemId() == R.id.routine) {
+                replaceFragment(new RoutineFragment());
+            }
+            else if(item.getItemId() == R.id.chat) {
+                replaceFragment(new ChatFragment());
+            }
+            else if(item.getItemId() == R.id.history) {
+                replaceFragment(new HistoryFragment());
+            }
+            else if(item.getItemId() == R.id.account) {
+                replaceFragment(new AccountFragment());
+            }
+
+            return true;
+        });
     }
     private void getTokenAndLoadUserData(){
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
@@ -122,16 +171,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void setListeners(){
-        Log.d("calltest", "setListeners() invoked");
-        binding.signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signOut();
-            }
-        });
 
-    }
 
 
 

@@ -48,7 +48,6 @@ class TextGenerationKotlin {
         )
 
 
-        var mainList = MainActivity.text
         var fullResponse = ""
         chat.sendMessageStream(prompt).collect { chunk ->
             print(chunk.text)
