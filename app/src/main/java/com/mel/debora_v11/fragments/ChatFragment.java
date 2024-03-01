@@ -21,6 +21,7 @@ import com.mel.debora_v11.models.ChatMessage;
 import com.mel.debora_v11.models.TextGenerationKotlin;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
+import com.mel.debora_v11.utilities.TextToSpeech;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +42,11 @@ public class ChatFragment extends Fragment {
 
     private FragmentChatBinding binding;
 
+    private TextToSpeech textToSpeech;
+
+    private String savePrompt;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,8 +54,32 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
 //        return inflater.inflate(R.layout.fragment_chat, container, false);
         binding = FragmentChatBinding.inflate(getLayoutInflater());
+
+        textToSpeech = new TextToSpeech();
+        init();
+        listenMessages();
+        setListeners();
         return binding.getRoot();
     }
+
+    private void setListeners(){
+        binding.sendButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                textToSpeech.stopUtterance();
+                if (binding.promptInput.getText().toString().trim().isEmpty()){
+                    textToSpeech.convertTextToSpeech(getActivity(), "please enter a prompt to continue");
+                }
+                else{
+                    sendMessage();
+                    receiveMessage();
+                }
+
+            }
+        });
+    }
+
 
     private void showToast(String text){
         Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
