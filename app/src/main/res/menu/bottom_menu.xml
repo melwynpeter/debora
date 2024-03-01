@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/rounded_cottage_24"/>
+
+    <item
+        android:id="@+id/routine"
+        android:title="Routine"
+        android:icon="@drawable/baseline_event_24"/>
+
+    <item
+        android:id="@+id/chat"
+        android:title="Chat"
+        android:icon="@drawable/baseline_assistant_24"/>
+
+    <item
+        android:id="@+id/history"
+        android:title="History"
+        android:icon="@drawable/rounded_device_reset_24"/>
+
+    <item
+        android:id="@+id/account"
+        android:title="Account"
+        android:icon="@drawable/baseline_account_circle_24"/>
+
+</menu>
