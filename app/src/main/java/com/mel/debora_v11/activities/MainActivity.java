@@ -40,12 +40,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static List<String> text;
 
     private ActivityMainBinding binding;
-    private List<ChatMessage> chatMessages;
-    private ChatAdapter chatAdapter;
-    private FirebaseFirestore db;
+
     private PreferenceManager preferenceManager;
     private String savePrompt;
 
@@ -60,15 +57,15 @@ public class MainActivity extends AppCompatActivity {
         textToSpeech = new TextToSpeech();
 //        getTokenAndLoadUserData();
         getToken();
-        setListeners();
-        init();
-        listenMessages();
+//        setListeners();
+//        init();
+//        listenMessages();
 
     }
     private void getTokenAndLoadUserData(){
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        binding.imageProfile.setImageBitmap(bitmap);
+//        binding.imageProfile.setImageBitmap(bitmap);
 //        if(preferenceManager.getString(Constants.KEY_IMAGE) != null) {
 //
 //        }
