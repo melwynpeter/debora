@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(item.getItemId() == R.id.chat) {
                 replaceFragment(new ChatFragment());
+                binding.bottomNavigationView.animate().translationY(binding.bottomNavigationView.getHeight());
+                binding.bottomAppbar.animate().translationY(binding.bottomAppbar.getHeight());
             }
             else if(item.getItemId() == R.id.history) {
                 replaceFragment(new HistoryFragment());
