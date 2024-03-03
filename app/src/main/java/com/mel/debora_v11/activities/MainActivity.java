@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,38 +14,24 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.ai.client.generativeai.Chat;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mel.debora_v11.R;
-import com.mel.debora_v11.adapters.ChatAdapter;
 import com.mel.debora_v11.databinding.ActivityMainBinding;
 import com.mel.debora_v11.fragments.AccountFragment;
 import com.mel.debora_v11.fragments.ChatFragment;
 import com.mel.debora_v11.fragments.HistoryFragment;
 import com.mel.debora_v11.fragments.HomeFragment;
 import com.mel.debora_v11.fragments.RoutineFragment;
-import com.mel.debora_v11.models.ChatMessage;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
 import com.mel.debora_v11.utilities.TextToSpeech;
-import com.mel.debora_v11.models.TextGenerationKotlin;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -75,7 +60,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        private void replaceFragment(Fragment fragment){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(binding.bottomAppbar.getTranslationY() == binding.bottomAppbar.getHeight()){
+            binding.bottomNavigationView.animate().translationY(0);
+            binding.bottomAppbar.animate().translationY(0);
+        }
+    }
+
+    private void replaceFragment(Fragment fragment){
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.frame_layout, fragment);
@@ -83,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
     private void setListeners(){
+
+        // bottom nav prob check
+        if(binding.bottomAppbar.isScrolledDown()){
+            binding.bottomNavigationView.animate().translationY(0);
+            binding.bottomAppbar.animate().translationY(0);
+        }
 //        binding.signOutButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -98,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new RoutineFragment());
             }
             else if(item.getItemId() == R.id.chat) {
-                replaceFragment(new ChatFragment());
+//                replaceFragment(new ChatFragment());
+                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom  ).replace(R.id.frame_layout, (new ChatFragment())).addToBackStack(null).commit();
                 binding.bottomNavigationView.animate().translationY(binding.bottomNavigationView.getHeight());
                 binding.bottomAppbar.animate().translationY(binding.bottomAppbar.getHeight());
             }

@@ -12,7 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Debora_v11"
         tools:targetApi="31">
-
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.SignInActivity"
             android:exported="true"

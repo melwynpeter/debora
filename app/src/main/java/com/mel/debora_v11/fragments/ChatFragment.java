@@ -78,6 +78,14 @@ public class ChatFragment extends Fragment {
 
             }
         });
+
+        binding.backArrowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().popBackStack();
+
+            }
+        });
     }
 
 
