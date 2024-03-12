@@ -99,9 +99,10 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(item.getItemId() == R.id.chat) {
 //                replaceFragment(new ChatFragment());
-                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom  ).replace(R.id.frame_layout, (new ChatFragment())).addToBackStack(null).commit();
+//                getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_bottom  ).replace(R.id.frame_layout, (new ChatFragment())).addToBackStack(null).commit();
 //                binding.bottomNavigationView.animate().translationY(binding.bottomNavigationView.getHeight());
 //                binding.bottomAppbar.animate().translationY(binding.bottomAppbar.getHeight());
+                startActivity(new Intent(this, ChatActivity.class));
             }
             else if(item.getItemId() == R.id.history) {
                 replaceFragment(new HistoryFragment());
