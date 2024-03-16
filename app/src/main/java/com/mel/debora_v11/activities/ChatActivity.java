@@ -83,6 +83,14 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        binding.newConversationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+
+            }
+        });
     }
 
 
@@ -131,6 +139,7 @@ public class ChatActivity extends AppCompatActivity {
         db.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, "GEMINI MODEL")
+//                .whereEqualTo(Constants.CONVERSATION_ID, )
                 .addSnapshotListener(eventListener);
         db.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, "GEMINI MODEL")
@@ -170,6 +179,12 @@ public class ChatActivity extends AppCompatActivity {
             binding.progressBar.setVisibility(View.GONE);
         }
     };
+
+
+    private void createNewConversation(){
+
+    }
+
     private String getReadableDateTime(Date date) {
         return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);
     }
