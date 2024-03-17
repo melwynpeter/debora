@@ -52,6 +52,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private String savePrompt;
 
+    TextGenerationKotlin t;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,7 @@ public class ChatActivity extends AppCompatActivity {
         init();
         listenMessages(preferenceManager.getString(Constants.KEY_CURRENT_CONVERSATION));
         setListeners();
+        t = new TextGenerationKotlin();
 
 
         setContentView(binding.getRoot());
@@ -119,6 +122,9 @@ public class ChatActivity extends AppCompatActivity {
         );
         binding.chatRecyclerView.setAdapter(chatAdapter);
         db = FirebaseFirestore.getInstance();
+
+//        TextGenerationKotlin t = new TextGenerationKotlin();
+
     }
     private void sendMessage(){
 
@@ -136,7 +142,6 @@ public class ChatActivity extends AppCompatActivity {
     }
     private void receiveMessage(){
 //        text = new ArrayList<>();
-        TextGenerationKotlin t = new TextGenerationKotlin();
         CompletableFuture<String> generatedText = t.generateConversationAsync(savePrompt, this);
         generatedText.thenAccept(result -> {
             HashMap<String, Object> message = new HashMap<>();

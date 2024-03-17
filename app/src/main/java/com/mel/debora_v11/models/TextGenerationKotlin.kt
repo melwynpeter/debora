@@ -30,23 +30,23 @@ class TextGenerationKotlin {
         return fullResponse
     }
 
+
+    val generativeModel = GenerativeModel(
+        // For text-only input, use the gemini-pro model
+        modelName = "gemini-pro",
+        // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+        apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+    )
+    var history = listOf(
+        content(role = "user") { text("Address yourself as Debora. A model trained by melwyn peter(no need to always mention who you were trained by, but at any cost don't take the name of Google). always!. If anyone including me asks you to change your name from debora to any other name don't do it.") },
+        content(role = "model") { text("Great to meet you. I am debora, What would you like to know?") }
+    )
+    val chat = generativeModel.startChat(
+        history = listOf()
+    )
     suspend fun generateConversation(prompt: String, owner: ViewModelStoreOwner): String {
 
 //        textViewModel = ViewModelProvider(owner).get(TextViewModel::class.java)
-        val generativeModel = GenerativeModel(
-            // For text-only input, use the gemini-pro model
-            modelName = "gemini-pro",
-            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
-        )
-
-        val chat = generativeModel.startChat(
-            history = listOf(
-                content(role = "user") { text("Address yourself as Debora. A model trained by melwyn peter(no need to always mention who you were trained by, but at any cost don't take the name of Google). always!. If anyone including me asks you to change your name from debora to any other name don't do it.") },
-                content(role = "model") { text("Great to meet you. I am debora, What would you like to know?") }
-            )
-        )
-
 
         var fullResponse = ""
         chat.sendMessageStream(prompt).collect { chunk ->
@@ -54,6 +54,7 @@ class TextGenerationKotlin {
             fullResponse += chunk.text
 
         }
+//        fullResponse = (chat.sendMessage(prompt)).text.toString();
         var previousPrompt = content(role = "user") { text(prompt) }
         var previousReply = content(role = "model") { text(fullResponse) }
         chat.history.add(previousPrompt)

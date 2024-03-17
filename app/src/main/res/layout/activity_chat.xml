@@ -30,12 +30,13 @@
             app:tint="@color/white" />
 
         <TextView
+            android:id="@+id/conversationName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/questrial"
             android:text="debora"
             android:textColor="@color/accent3"
             android:textSize="@dimen/_17sdp"
+            android:layout_gravity="center_horizontal"
             android:textStyle="bold" />
 
         <ImageView
