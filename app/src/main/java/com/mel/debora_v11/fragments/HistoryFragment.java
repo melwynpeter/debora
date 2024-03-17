@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.FragmentHistoryBinding;
+import com.mel.debora_v11.models.Conversation;
 import com.mel.debora_v11.models.History;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
@@ -43,8 +45,15 @@ public class HistoryFragment extends Fragment {
                     String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
                     if(task.isSuccessful() && task.getResult() != null){
                         List<History> histories = new ArrayList<>();
+//                        for (QueryDocumentSnapshot queryDocumentSnapshot){
+//                            if(currentUserId.equals(queryDocumentSnapshot.getId())){
+//                                continue;
+//                            }
+//                            Conversation conversation = new Conversation();
+//                            conversation.conversationName = queryDocumentSnapshot.getString(Constants.KEY_CONVERSATION_NAME);
+//                        }
                     }
-                })
+                });
     }
 
     private void showErrorMessage(){

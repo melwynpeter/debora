@@ -1,6 +1,8 @@
 package com.mel.debora_v11.models;
 
-public class History {
+import java.io.Serializable;
+
+public class History implements Serializable {
     public String text;
     public History(String text){
         this.text = text;
