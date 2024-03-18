@@ -221,9 +221,9 @@ public class ChatActivity extends AppCompatActivity {
 
         generatedConversationName = false;
 
-        if(isFirstConversation){
-            preferenceManager.putString(Constants.KEY_CONVERSATION_ID, (Constants.KEY_USER_ID + "First Conversation"));
-        }
+//        if(isFirstConversation){
+//            preferenceManager.putString(Constants.KEY_CONVERSATION_ID, (Constants.KEY_USER_ID + "First Conversation"));
+//        }
 
 
         String conversationName = "";
