@@ -10,27 +10,6 @@ import java.util.concurrent.CompletableFuture
 
 
 class TextGenerationKotlin {
-    suspend fun generateText(prompt: String): String{
-        val generativeModel = GenerativeModel(
-            // For text-and-image input (multimodal), use the gemini-pro-vision model
-            modelName = "gemini-pro",
-            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
-        )
-
-        val inputContent = content {
-            text("hey how are you")
-        }
-
-        var fullResponse = ""
-        generativeModel.generateContentStream(inputContent).collect { chunk ->
-            print(chunk.text)
-            fullResponse += chunk.text
-        }
-        return fullResponse
-    }
-
-
     val generativeModel = GenerativeModel(
         // For text-only input, use the gemini-pro model
         modelName = "gemini-pro",
@@ -63,6 +42,40 @@ class TextGenerationKotlin {
 
     }
 
+    suspend fun generateConversationName(){
+
+    }
+
+
+
+
+    fun generateConversationAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversation(prompt, owner) }
+
+
+
+
+
+
+    suspend fun generateText(prompt: String): String{
+        val generativeModel = GenerativeModel(
+            // For text-and-image input (multimodal), use the gemini-pro-vision model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+
+        val inputContent = content {
+            text("hey how are you")
+        }
+
+        var fullResponse = ""
+        generativeModel.generateContentStream(inputContent).collect { chunk ->
+            print(chunk.text)
+            fullResponse += chunk.text
+        }
+        return fullResponse
+    }
+
     suspend fun generateChat(prompt: String){
         val generativeModel = GenerativeModel(
             // For text-only input, use the gemini-pro model
@@ -77,6 +90,4 @@ class TextGenerationKotlin {
         }
     }
 
-
-    fun generateConversationAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversation(prompt, owner) }
 }

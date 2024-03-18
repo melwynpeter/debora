@@ -49,7 +49,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         }
 
         void setHistoryData(History history){
-            binding.textName.setText(history.text);
+            binding.textName.setText(history.conversationId);
         }
     }
 }
