@@ -22,6 +22,7 @@ import com.mel.debora_v11.adapters.ChatAdapter;
 import com.mel.debora_v11.databinding.ActivityChatBinding;
 import com.mel.debora_v11.databinding.FragmentChatBinding;
 import com.mel.debora_v11.models.ChatMessage;
+import com.mel.debora_v11.models.History;
 import com.mel.debora_v11.models.TextGenerationKotlin;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
@@ -53,6 +54,9 @@ public class ChatActivity extends AppCompatActivity {
     private String savePrompt;
 
     TextGenerationKotlin t;
+    private boolean generatedConversationName = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +66,10 @@ public class ChatActivity extends AppCompatActivity {
 
         textToSpeech = new TextToSpeech();
         init();
-        listenMessages(preferenceManager.getString(Constants.KEY_CURRENT_CONVERSATION));
+        listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
         setListeners();
         t = new TextGenerationKotlin();
+        Toast.makeText(this, preferenceManager.getString(Constants.KEY_CONVERSATION_ID), Toast.LENGTH_SHORT).show();
 
 
         setContentView(binding.getRoot());
@@ -99,7 +104,8 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 chatMessages.clear();
                 chatAdapter.notifyDataSetChanged();
-                createNewConversation();
+                createNewConversation(false);
+
             }
         });
     }
@@ -134,7 +140,7 @@ public class ChatActivity extends AppCompatActivity {
         message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID, "GEMINI MODEL");
         message.put(Constants.KEY_MESSAGE, binding.promptInput.getText().toString());
-        message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CURRENT_CONVERSATION));
+        message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
         message.put(Constants.KEY_TIMESTAMP, new Date());
         db.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         savePrompt = binding.promptInput.getText().toString();
@@ -147,7 +153,7 @@ public class ChatActivity extends AppCompatActivity {
             HashMap<String, Object> message = new HashMap<>();
             message.put(Constants.KEY_SENDER_ID, "GEMINI MODEL");
             message.put(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-            message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CURRENT_CONVERSATION));
+            message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
             message.put(Constants.KEY_MESSAGE, result);
             message.put(Constants.KEY_TIMESTAMP, new Date());
             db.collection(Constants.KEY_COLLECTION_CHAT).add(message);
@@ -184,8 +190,13 @@ public class ChatActivity extends AppCompatActivity {
                     chatMessages.add(chatMessage);
                     Log.d("countCheck", "count inside loop: " + count);
 
+
                 }
                 Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
+                if(count == 2 && generatedConversationName == false){
+                    generateConversationName();
+                    Toast.makeText(this, "generated a coversaruib bame", Toast.LENGTH_SHORT).show();
+                }
                 if(count == 0){
                     chatAdapter.notifyDataSetChanged();
                 }
@@ -201,14 +212,18 @@ public class ChatActivity extends AppCompatActivity {
     };
 
     private void initConversation(){
-        if(preferenceManager.getString(Constants.KEY_CURRENT_CONVERSATION).equals("")){
-            createNewConversation();
+        if(preferenceManager.getString(Constants.KEY_CONVERSATION_ID).equals("")){
+            createNewConversation(true);
         }
     }
 
-    private void createNewConversation(){
-        String conversationId = preferenceManager.getString(Constants.KEY_USER_ID) + (new Date()).toString();
-        listenMessages(conversationId);
+    private void createNewConversation(boolean isFirstConversation){
+
+        generatedConversationName = false;
+
+        if(isFirstConversation){
+            preferenceManager.putString(Constants.KEY_CONVERSATION_ID, (Constants.KEY_USER_ID + "First Conversation"));
+        }
 
 
         String conversationName = "";
@@ -216,7 +231,6 @@ public class ChatActivity extends AppCompatActivity {
         String conversationCreationDate = (new Date()).toString();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         HashMap<String, Object> conversation = new HashMap<>();
-        conversation.put(Constants.KEY_CONVERSATION_ID, conversationId);
         conversation.put(Constants.KEY_CONVERSATION_NAME, conversationName);
         conversation.put(Constants.KEY_CONVERSATION_CREATOR_ID, conversationCreatorId);
         conversation.put(Constants.KEY_CONVERSATION_CREATION_DATE, conversationCreationDate);
@@ -226,7 +240,9 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("mydebtest", "conversation added successfully" + documentReference);
-                        preferenceManager.putString(Constants.KEY_CURRENT_CONVERSATION, conversationId);
+                        preferenceManager.putString(Constants.KEY_CONVERSATION_ID, documentReference.getId());
+                        listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -237,6 +253,31 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void generateConversationName(){
+        CompletableFuture<String> generatedText = t.generateConversationNameAsync(chatMessages.get(2).message, this);
+        generatedText.thenAccept(result -> {
+            DocumentReference documentReference = db.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                    .document(
+                            preferenceManager.getString(Constants.KEY_CONVERSATION_ID)
+                    );
+            documentReference.update(Constants.KEY_CONVERSATION_NAME, result)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            binding.conversationName.setText(result);
+                            generatedConversationName = true;
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+//                        showToast("Unable to update token.");
+                        }
+                    });
+        });
+    }
+
 
     private String getReadableDateTime(Date date) {
         return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);

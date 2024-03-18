@@ -21,7 +21,6 @@ public class Constants {
     public static final String KEY_CONVERSATION_NAME = "conversationName";
     public static final String KEY_CONVERSATION_CREATOR_ID = "conversationCreatorId";
     public static final String KEY_CONVERSATION_CREATION_DATE = "conversationCreationDate";
-    public static final String KEY_CURRENT_CONVERSATION = "currentConversation";
 
 
 }
