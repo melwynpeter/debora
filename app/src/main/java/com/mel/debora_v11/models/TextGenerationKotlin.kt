@@ -42,14 +42,26 @@ class TextGenerationKotlin {
 
     }
 
-    suspend fun generateConversationName(){
+    suspend fun generateConversationName(prompt: String, owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
 
+        val summaryPrompt = "Summarize this into a conversation heading: " + prompt;
+        val response = generativeModel.generateContent(summaryPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        return fullResponse
     }
 
 
 
 
     fun generateConversationAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversation(prompt, owner) }
+    fun generateConversationNameAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversationName(prompt, owner) }
 
 
 
