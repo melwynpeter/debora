@@ -2,8 +2,10 @@ package com.mel.debora_v11.fragments;
 
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.mel.debora_v11.databinding.FragmentHistoryBinding;
 import com.mel.debora_v11.models.Account;
 import com.mel.debora_v11.models.Card;
 import com.mel.debora_v11.models.History;
+import com.mel.debora_v11.utilities.DividerItemDecorator;
 import com.mel.debora_v11.utilities.PreferenceManager;
 
 import java.util.ArrayList;
@@ -50,6 +53,9 @@ public class AccountFragment extends Fragment {
 
         AccountAdapter accountAdapter = new AccountAdapter(accountTextList);
         binding.accountRecyclerView.setAdapter(accountAdapter);
+
+        RecyclerView.ItemDecoration dividerItemDecoration = new DividerItemDecorator(ContextCompat.getDrawable(getContext(), R.drawable.divider));
+        binding.accountRecyclerView.addItemDecoration(dividerItemDecoration);
 
 
         return binding.getRoot();
