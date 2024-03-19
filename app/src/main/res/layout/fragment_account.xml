@@ -3,14 +3,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.AccountFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="60dp"
-        android:gravity="center"
-        android:text="Account" />
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="@dimen/_1sdp"
+                android:src="@drawable/settings_gear"
+                android:padding="@dimen/_10sdp"
+                android:contentDescription="none"
+                android:background="@drawable/button_ripple_background"
+                app:tint="@color/white"
+
+                />
+
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageProfile"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:background="@drawable/profile_image_background"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.043"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintVertical_bias="0.025" />
+
+        <TextView
+            android:id="@+id/usernameDisplayTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="Simone"
+            android:textColor="@color/accent3"
+            android:textSize="@dimen/_17sdp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.074"
+            app:layout_constraintStart_toEndOf="@+id/imageProfile"
+            app:layout_constraintTop_toTopOf="@+id/imageProfile" />
+
+        <View
+            android:id="@+id/viewSupporter"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="@id/imageProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageProfile" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/accountRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/viewSupporter"
+            app:layout_constraintVertical_bias="0.081" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
