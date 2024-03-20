@@ -32,6 +32,10 @@ public class PreferenceManager {
         editor.apply();
     }
 
+    public boolean containsString(String key){
+        return sharedPreferences.contains(key);
+    }
+
 
 
 

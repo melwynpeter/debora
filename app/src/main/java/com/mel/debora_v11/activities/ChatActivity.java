@@ -212,7 +212,7 @@ public class ChatActivity extends AppCompatActivity {
     };
 
     private void initConversation(){
-        if(preferenceManager.getString(Constants.KEY_CONVERSATION_ID).equals("")){
+        if(!preferenceManager.containsString(Constants.KEY_CONVERSATION_ID)){
             createNewConversation(true);
         }
     }
