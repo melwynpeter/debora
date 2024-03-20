@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -54,7 +56,7 @@ public class ChatActivity extends AppCompatActivity {
     private String savePrompt;
 
     TextGenerationKotlin t;
-    private boolean generatedConversationName = false;
+    private boolean generatedConversationName = true;
 
 
 
@@ -131,6 +133,23 @@ public class ChatActivity extends AppCompatActivity {
 
 //        TextGenerationKotlin t = new TextGenerationKotlin();
 
+        // check conversation name
+        db.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                .whereEqualTo(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID))
+                .whereEqualTo(Constants.KEY_CONVERSATION_NAME, "New Chat")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        generatedConversationName = false;
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        generatedConversationName = true;
+                    }
+                });
+
     }
     private void sendMessage(){
 
@@ -193,7 +212,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 }
                 Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
-                if(count == 2 && generatedConversationName == false){
+                if(count == 1 && generatedConversationName == false){
                     generateConversationName();
                     Toast.makeText(this, "generated a coversaruib bame", Toast.LENGTH_SHORT).show();
                 }
@@ -215,6 +234,9 @@ public class ChatActivity extends AppCompatActivity {
         if(!preferenceManager.containsString(Constants.KEY_CONVERSATION_ID)){
             createNewConversation(true);
         }
+        if(preferenceManager.containsString(Constants.KEY_CONVERSATION_NAME)){
+            binding.conversationName.setText(preferenceManager.getString(Constants.KEY_CONVERSATION_NAME));
+        }
     }
 
     private void createNewConversation(boolean isFirstConversation){
@@ -226,7 +248,7 @@ public class ChatActivity extends AppCompatActivity {
 //        }
 
 
-        String conversationName = "";
+        String conversationName = "New Chat";
         String conversationCreatorId = preferenceManager.getString(Constants.KEY_USER_ID);
         String conversationCreationDate = (new Date()).toString();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -241,8 +263,12 @@ public class ChatActivity extends AppCompatActivity {
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("mydebtest", "conversation added successfully" + documentReference);
                         preferenceManager.putString(Constants.KEY_CONVERSATION_ID, documentReference.getId());
+                        preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
+                        binding.conversationName.setText("New Chat");
+                        if(textToSpeech.isUtterance()) {
+                            textToSpeech.stopUtterance();
+                        }
                         listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -255,7 +281,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void generateConversationName(){
-        CompletableFuture<String> generatedText = t.generateConversationNameAsync(chatMessages.get(2).message, this);
+        CompletableFuture<String> generatedText = t.generateConversationNameAsync(chatMessages.get(1).message, this);
         generatedText.thenAccept(result -> {
             DocumentReference documentReference = db.collection(Constants.KEY_COLLECTION_CONVERSATION)
                     .document(
@@ -267,6 +293,7 @@ public class ChatActivity extends AppCompatActivity {
                         public void onSuccess(Void unused) {
                             binding.conversationName.setText(result);
                             generatedConversationName = true;
+                            preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, result);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

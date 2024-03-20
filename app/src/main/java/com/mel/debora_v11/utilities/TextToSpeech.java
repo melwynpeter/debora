@@ -33,4 +33,13 @@ public class TextToSpeech {
             t1.stop();
         }
     }
+
+    public boolean isUtterance(){
+        if(t1 != null){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

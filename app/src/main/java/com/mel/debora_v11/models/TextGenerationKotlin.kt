@@ -50,7 +50,7 @@ class TextGenerationKotlin {
             apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
         )
 
-        val summaryPrompt = "Summarize the following String into a conversation heading in 2 to 3 words and consider the greetings as 'greetings', let it be without any symbols or text formating: " + prompt;
+        val summaryPrompt = "Summarize the following String into a conversation heading in 2 to 3 words, let it be without any symbols or text formating, consider greetings as 'greetings': " + prompt;
         val response = generativeModel.generateContent(summaryPrompt)
         var fullResponse = response.text ?: ""
         print(response.text)
