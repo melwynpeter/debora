@@ -9,7 +9,7 @@
     android:padding="@dimen/_20sdp">
 
     <TextView
-        android:id="@+id/textName"
+        android:id="@+id/historyName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"

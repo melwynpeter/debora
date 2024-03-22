@@ -151,88 +151,16 @@ public class ChatActivity extends AppCompatActivity {
                 });
 
     }
-    private void sendMessage(){
-
-        Log.d("calltest", "sendMessage() invoked");
-
-        HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-        message.put(Constants.KEY_RECEIVER_ID, "GEMINI MODEL");
-        message.put(Constants.KEY_MESSAGE, binding.promptInput.getText().toString());
-        message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
-        message.put(Constants.KEY_TIMESTAMP, new Date());
-        db.collection(Constants.KEY_COLLECTION_CHAT).add(message);
-        savePrompt = binding.promptInput.getText().toString();
-        binding.promptInput.setText(null);
-    }
-    private void receiveMessage(){
-//        text = new ArrayList<>();
-        CompletableFuture<String> generatedText = t.generateConversationAsync(savePrompt, this);
-        generatedText.thenAccept(result -> {
-            HashMap<String, Object> message = new HashMap<>();
-            message.put(Constants.KEY_SENDER_ID, "GEMINI MODEL");
-            message.put(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-            message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
-            message.put(Constants.KEY_MESSAGE, result);
-            message.put(Constants.KEY_TIMESTAMP, new Date());
-            db.collection(Constants.KEY_COLLECTION_CHAT).add(message);
-            textToSpeech.convertTextToSpeech(getApplicationContext(), result);
-        });
-    }
-    private void listenMessages(String conversationId){
-        db.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, "GEMINI MODEL")
-                .whereEqualTo(Constants.KEY_CONVERSATION_ID, conversationId)
-                .addSnapshotListener(eventListener);
-        db.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, "GEMINI MODEL")
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
-                .whereEqualTo(Constants.KEY_CONVERSATION_ID, conversationId)
-                .addSnapshotListener(eventListener);
-    }
-    private final EventListener<QuerySnapshot> eventListener = (value, error) ->  {
-        if(error != null){
-            return;
-        }
-        if (value != null){
-            int count = chatMessages.size();
-            Log.d("countCheck", "count before loop: " + count);
-            for (DocumentChange documentChange : value.getDocumentChanges()){
-                if(documentChange.getType() == DocumentChange.Type.ADDED){
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
-                    chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
-                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                    chatMessages.add(chatMessage);
-                    Log.d("countCheck", "count inside loop: " + count);
-
-
-                }
-                Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
-                if(count == 1 && generatedConversationName == false){
-                    generateConversationName();
-                    Toast.makeText(this, "generated a coversaruib bame", Toast.LENGTH_SHORT).show();
-                }
-                if(count == 0){
-                    chatAdapter.notifyDataSetChanged();
-                }
-                else{
-                    chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
-                    binding.chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
-                }
-                binding.chatRecyclerView.setVisibility(View.VISIBLE);
-
-            }
-            binding.progressBar.setVisibility(View.GONE);
-        }
-    };
-
     private void initConversation(){
-        if(!preferenceManager.containsString(Constants.KEY_CONVERSATION_ID)){
+        if(!preferenceManager.containsString(Constants.KEY_CONVERSATION_ID) && !getIntent().hasExtra(Constants.KEY_CONVERSATION_ID)){
             createNewConversation(true);
+        }
+        else if(getIntent().hasExtra(Constants.KEY_CONVERSATION_ID)){
+            String conversationId = getIntent().getStringExtra(Constants.KEY_CONVERSATION_ID);
+            String conversationName = getIntent().getStringExtra(Constants.KEY_CONVERSATION_NAME);
+
+            preferenceManager.putString(Constants.KEY_CONVERSATION_ID, conversationId);
+            preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, conversationName);
         }
         if(preferenceManager.containsString(Constants.KEY_CONVERSATION_NAME)){
             binding.conversationName.setText(preferenceManager.getString(Constants.KEY_CONVERSATION_NAME));
@@ -279,6 +207,85 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
+    private void sendMessage(){
+
+        Log.d("calltest", "sendMessage() invoked");
+
+        HashMap<String, Object> message = new HashMap<>();
+        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+        message.put(Constants.KEY_RECEIVER_ID, "GEMINI MODEL");
+        message.put(Constants.KEY_MESSAGE, binding.promptInput.getText().toString());
+        message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
+        message.put(Constants.KEY_TIMESTAMP, new Date());
+        db.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+        savePrompt = binding.promptInput.getText().toString();
+        binding.promptInput.setText(null);
+    }
+    private void receiveMessage(){
+//        text = new ArrayList<>();
+        CompletableFuture<String> generatedText = t.generateConversationAsync(savePrompt, this);
+        generatedText.thenAccept(result -> {
+            HashMap<String, Object> message = new HashMap<>();
+            message.put(Constants.KEY_SENDER_ID, "GEMINI MODEL");
+            message.put(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+            message.put(Constants.KEY_CONVERSATION_ID, preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
+            message.put(Constants.KEY_MESSAGE, result);
+            message.put(Constants.KEY_TIMESTAMP, new Date());
+            db.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+            textToSpeech.convertTextToSpeech(getApplicationContext(), result);
+        });
+    }
+    private void listenMessages(String conversationId){
+        db.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, "GEMINI MODEL")
+                .whereEqualTo(Constants.KEY_CONVERSATION_ID, conversationId)
+                .addSnapshotListener(eventListener);
+        db.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID, "GEMINI MODEL")
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_CONVERSATION_ID, conversationId)
+                .addSnapshotListener(eventListener);
+    }
+
+    private final EventListener<QuerySnapshot> eventListener = (value, error) ->  {
+        if(error != null){
+            return;
+        }
+        if (value != null){
+            int count = chatMessages.size();
+            Log.d("countCheck", "count before loop: " + count);
+            for (DocumentChange documentChange : value.getDocumentChanges()){
+                if(documentChange.getType() == DocumentChange.Type.ADDED){
+                    ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                    chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
+                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    chatMessages.add(chatMessage);
+                    Log.d("countCheck", "count inside loop: " + count);
+
+
+                }
+                Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
+                if(count == 1 && generatedConversationName == false){
+                    generateConversationName();
+                    Toast.makeText(this, "generated a coversaruib bame", Toast.LENGTH_SHORT).show();
+                }
+                if(count == 0){
+                    chatAdapter.notifyDataSetChanged();
+                }
+                else{
+                    chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
+                    binding.chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
+                }
+                binding.chatRecyclerView.setVisibility(View.VISIBLE);
+
+            }
+            binding.progressBar.setVisibility(View.GONE);
+        }
+    };
 
     private void generateConversationName(){
         CompletableFuture<String> generatedText = t.generateConversationNameAsync(chatMessages.get(1).message, this);

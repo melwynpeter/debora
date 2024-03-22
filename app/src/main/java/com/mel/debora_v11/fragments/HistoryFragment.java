@@ -64,18 +64,18 @@ public class HistoryFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         loading(false);
                         if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
-                            List<History> histories = new ArrayList<>();
+                            histories = new ArrayList<>();
                             for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                                 DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
 
                                 History history = new History();
-                                history.conversationId = queryDocumentSnapshot.getString(Constants.KEY_CONVERSATION_ID);
+                                history.conversationId = queryDocumentSnapshot.getId();
                                 history.conversationName = queryDocumentSnapshot.getString(Constants.KEY_CONVERSATION_NAME);
                                 history.dateTime = queryDocumentSnapshot.getString(Constants.KEY_CONVERSATION_CREATION_DATE);
                                 histories.add(history);
                             }
                             if (histories.size() > 0) {
-                                HistoryAdapter historyAdapter = new HistoryAdapter(histories);
+                                HistoryAdapter historyAdapter = new HistoryAdapter(getContext(), histories);
                                 binding.historyRecyclerView.setAdapter(historyAdapter);
                                 binding.historyRecyclerView.setVisibility(View.VISIBLE);
                             } else {
