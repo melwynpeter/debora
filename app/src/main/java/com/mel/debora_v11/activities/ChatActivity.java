@@ -1,5 +1,6 @@
 package com.mel.debora_v11.activities;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -103,6 +104,17 @@ public class ChatActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (textToSpeech.isUtterance()){
+                    textToSpeech.stopUtterance();
+                }
+                finish();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
 
         binding.newConversationButton.setOnClickListener(new View.OnClickListener() {
             @Override
