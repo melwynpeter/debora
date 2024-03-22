@@ -148,6 +148,8 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         generatedConversationName = false;
+                        binding.conversationName.setText("New Chat");
+                        preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -184,7 +186,6 @@ public class ChatActivity extends AppCompatActivity {
 
         String conversationName = "New Chat";
         String conversationCreatorId = preferenceManager.getString(Constants.KEY_USER_ID);
-//        String conversationCreationDate = (new Date()).toString();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         HashMap<String, Object> conversation = new HashMap<>();
         conversation.put(Constants.KEY_CONVERSATION_NAME, conversationName);
