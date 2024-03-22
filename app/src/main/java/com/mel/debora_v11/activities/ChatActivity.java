@@ -112,6 +112,7 @@ public class ChatActivity extends AppCompatActivity {
                 if(textToSpeech.isUtterance()) {
                     textToSpeech.stopUtterance();
                 }
+                binding.conversationName.setText("New Chat");
                 createNewConversation(false);
 
             }
@@ -148,8 +149,8 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         generatedConversationName = false;
-                        binding.conversationName.setText("New Chat");
-                        preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
+//                        binding.conversationName.setText("New Chat");
+//                        preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -183,33 +184,34 @@ public class ChatActivity extends AppCompatActivity {
 //            preferenceManager.putString(Constants.KEY_CONVERSATION_ID, (Constants.KEY_USER_ID + "First Conversation"));
 //        }
 
-
-        String conversationName = "New Chat";
-        String conversationCreatorId = preferenceManager.getString(Constants.KEY_USER_ID);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        HashMap<String, Object> conversation = new HashMap<>();
-        conversation.put(Constants.KEY_CONVERSATION_NAME, conversationName);
-        conversation.put(Constants.KEY_CONVERSATION_CREATOR_ID, conversationCreatorId);
-        conversation.put(Constants.KEY_TIMESTAMP, new Date());
-        db.collection(Constants.KEY_COLLECTION_CONVERSATION)
-                .add(conversation)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("mydebtest", "conversation added successfully" + documentReference);
-                        preferenceManager.putString(Constants.KEY_CONVERSATION_ID, documentReference.getId());
-                        preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
-                        binding.conversationName.setText("New Chat");
-                        listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("mydebtest", "Error adding user", e);
+        if(!(chatMessages.size() == 0)) {
+            String conversationName = "New Chat";
+            String conversationCreatorId = preferenceManager.getString(Constants.KEY_USER_ID);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            HashMap<String, Object> conversation = new HashMap<>();
+            conversation.put(Constants.KEY_CONVERSATION_NAME, conversationName);
+            conversation.put(Constants.KEY_CONVERSATION_CREATOR_ID, conversationCreatorId);
+            conversation.put(Constants.KEY_TIMESTAMP, new Date());
+            db.collection(Constants.KEY_COLLECTION_CONVERSATION)
+                    .add(conversation)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d("mydebtest", "conversation added successfully" + documentReference);
+                            preferenceManager.putString(Constants.KEY_CONVERSATION_ID, documentReference.getId());
+                            preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
+                            binding.conversationName.setText("New Chat");
+                            listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("mydebtest", "Error adding user", e);
 //                        Toast.makeText(SignUpActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        }
+                    });
+        }
     }
     private void sendMessage(){
 

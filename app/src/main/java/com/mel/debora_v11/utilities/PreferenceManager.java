@@ -36,6 +36,13 @@ public class PreferenceManager {
         return sharedPreferences.contains(key);
     }
 
+    public void clearConversation(){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(Constants.KEY_CONVERSATION_ID);
+        editor.remove(Constants.KEY_CONVERSATION_NAME);
+        editor.apply();
+    }
+
 
 
 
