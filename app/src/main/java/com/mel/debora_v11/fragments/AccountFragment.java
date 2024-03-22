@@ -51,6 +51,10 @@ public class AccountFragment extends Fragment {
         binding = FragmentAccountBinding.inflate(getLayoutInflater());
         preferenceManager = new PreferenceManager(getActivity());
 
+
+        // Set Username Display TextView
+        binding.usernameDisplayTextView.setText(preferenceManager.getString(Constants.KEY_USERNAME));
+
         binding.accountRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
 

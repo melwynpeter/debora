@@ -13,6 +13,8 @@ import com.mel.debora_v11.R;
 import com.mel.debora_v11.adapters.CardAdapter;
 import com.mel.debora_v11.databinding.FragmentHomeBinding;
 import com.mel.debora_v11.models.Card;
+import com.mel.debora_v11.utilities.Constants;
+import com.mel.debora_v11.utilities.PreferenceManager;
 
 import org.checkerframework.checker.units.qual.C;
 
@@ -22,6 +24,7 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private PreferenceManager preferenceManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,7 +33,10 @@ public class HomeFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_home, container, false);
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
 
+        preferenceManager = new PreferenceManager(getActivity());
 
+        // set Username Display TextView
+        binding.usernameDisplayTextView.setText(preferenceManager.getString(Constants.KEY_USERNAME));
         binding.recentRecyclerView.setHasFixedSize(true);
         binding.recentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
