@@ -71,9 +71,12 @@ public class HistoryFragment extends Fragment {
                                 History history = new History();
                                 history.conversationId = queryDocumentSnapshot.getId();
                                 history.conversationName = queryDocumentSnapshot.getString(Constants.KEY_CONVERSATION_NAME);
-                                history.dateTime = queryDocumentSnapshot.getString(Constants.KEY_CONVERSATION_CREATION_DATE);
+                                history.dateTime = getReadableDateTime(queryDocumentSnapshot.getDate(Constants.KEY_TIMESTAMP));
+                                history.dateObject = queryDocumentSnapshot.getDate(Constants.KEY_TIMESTAMP);
                                 histories.add(history);
                             }
+                            Collections.sort(histories, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
+
                             if (histories.size() > 0) {
                                 HistoryAdapter historyAdapter = new HistoryAdapter(getContext(), histories);
                                 binding.historyRecyclerView.setAdapter(historyAdapter);

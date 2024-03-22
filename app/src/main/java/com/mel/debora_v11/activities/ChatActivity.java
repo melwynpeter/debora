@@ -97,6 +97,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                getParentFragmentManager().popBackStack();
+                if (textToSpeech.isUtterance()){
+                    textToSpeech.stopUtterance();
+                }
                 finish();
             }
         });
@@ -106,6 +109,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 chatMessages.clear();
                 chatAdapter.notifyDataSetChanged();
+                if(textToSpeech.isUtterance()) {
+                    textToSpeech.stopUtterance();
+                }
                 createNewConversation(false);
 
             }
@@ -178,12 +184,12 @@ public class ChatActivity extends AppCompatActivity {
 
         String conversationName = "New Chat";
         String conversationCreatorId = preferenceManager.getString(Constants.KEY_USER_ID);
-        String conversationCreationDate = (new Date()).toString();
+//        String conversationCreationDate = (new Date()).toString();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         HashMap<String, Object> conversation = new HashMap<>();
         conversation.put(Constants.KEY_CONVERSATION_NAME, conversationName);
         conversation.put(Constants.KEY_CONVERSATION_CREATOR_ID, conversationCreatorId);
-        conversation.put(Constants.KEY_CONVERSATION_CREATION_DATE, conversationCreationDate);
+        conversation.put(Constants.KEY_TIMESTAMP, new Date());
         db.collection(Constants.KEY_COLLECTION_CONVERSATION)
                 .add(conversation)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -193,9 +199,6 @@ public class ChatActivity extends AppCompatActivity {
                         preferenceManager.putString(Constants.KEY_CONVERSATION_ID, documentReference.getId());
                         preferenceManager.putString(Constants.KEY_CONVERSATION_NAME, "New Chat");
                         binding.conversationName.setText("New Chat");
-                        if(textToSpeech.isUtterance()) {
-                            textToSpeech.stopUtterance();
-                        }
                         listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
                     }
                 })
