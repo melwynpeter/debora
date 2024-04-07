@@ -1,6 +1,8 @@
 package com.mel.debora_v11.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -23,15 +27,19 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.ActivityMainBinding;
 import com.mel.debora_v11.fragments.AccountFragment;
-import com.mel.debora_v11.fragments.ChatFragment;
 import com.mel.debora_v11.fragments.HistoryFragment;
 import com.mel.debora_v11.fragments.HomeFragment;
 import com.mel.debora_v11.fragments.RoutineFragment;
+import com.mel.debora_v11.utilities.AudioClassificationHelper;
+import com.mel.debora_v11.utilities.AudioClassificationListener;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
 import com.mel.debora_v11.utilities.TextToSpeech;
 
+import org.tensorflow.lite.support.label.Category;
+
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +50,37 @@ public class MainActivity extends AppCompatActivity {
 
 
     private TextToSpeech textToSpeech;
+
+    private AudioClassificationHelper audioHelper;
+    private int RECORD_AUDIO_REQUEST_CODE = 100;
+
+
+    private AudioClassificationListener audioClassificationListener = new AudioClassificationListener() {
+
+        @Override
+        public void onResult(List<Category> results, Long inferenceTime) {
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.980000) {
+                        audioHelper.stopAudioClassification();
+                        startActivity(new Intent(MainActivity.this, AudioActivity.class));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onError(String error) {
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,19 +93,41 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
 
 
+        // Audio Recording permission
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+        }
+        else {
+            // INIT AUDIO CLASSSIFIER
+            audioHelper = new AudioClassificationHelper(
+                    getApplicationContext(),
+                    audioClassificationListener
+            );
+        }
+
         // fragments
         binding.bottomNavigationView.setBackground(null);
         replaceFragment(new HomeFragment());
 
+
+
         }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if(binding.bottomAppbar.getTranslationY() == binding.bottomAppbar.getHeight()){
-            binding.bottomNavigationView.animate().translationY(0);
-            binding.bottomAppbar.animate().translationY(0);
+    protected void onResume() {
+        super.onResume();
+        if(audioHelper.isStopped()){
+            audioHelper.startAudioClassification();
+//        audioHelper.initClassifier();
         }
+        Toast.makeText(this, "called onResume", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+            audioHelper.stopAudioClassification();
+        Toast.makeText(this, "called onPause", Toast.LENGTH_SHORT).show();
     }
 
     private void replaceFragment(Fragment fragment){
@@ -178,7 +239,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if(requestCode == RECORD_AUDIO_REQUEST_CODE){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                // INIT AUDIO CLASSSIFIER
+                        audioHelper = new AudioClassificationHelper(
+                        getApplicationContext(),
+                        audioClassificationListener
+                );
+            }
+            else{
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 
 }

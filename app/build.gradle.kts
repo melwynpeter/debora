@@ -68,4 +68,7 @@ dependencies {
     implementation("com.makeramen:roundedimageview:2.3.0")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+
+    implementation("org.tensorflow:tensorflow-lite-task-audio:0.4.0")
+
 }
