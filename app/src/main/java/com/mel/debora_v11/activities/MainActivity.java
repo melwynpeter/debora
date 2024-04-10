@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioRecord;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -40,6 +41,7 @@ import org.tensorflow.lite.support.label.Category;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.980000) {
+                    if (results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.950000) {
                         audioHelper.stopAudioClassification();
+                        Toast.makeText(MainActivity.this, results.get(0).getScore() + "", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, AudioActivity.class));
                     }
                 }
@@ -96,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
         // Audio Recording permission
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+            // INIT AUDIO CLASSSIFIER
+            audioHelper = new AudioClassificationHelper(
+                    getApplicationContext(),
+                    audioClassificationListener
+            );
         }
         else {
             // INIT AUDIO CLASSSIFIER
@@ -114,20 +122,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if(audioHelper.isStopped()){
-            audioHelper.startAudioClassification();
-//        audioHelper.initClassifier();
+    protected void onRestart() {
+        super.onRestart();
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
         }
-        Toast.makeText(this, "called onResume", Toast.LENGTH_SHORT).show();
+
+        if(audioHelper != null){
+            if (audioHelper.recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+                audioHelper.stopAudioClassification();
+            }
+            audioHelper.initClassifier();
+        }
+//        Toast.makeText(this, "called onResume", Toast.LENGTH_SHORT).show();
     }
 
+
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        if(audioHelper != null){
             audioHelper.stopAudioClassification();
-        Toast.makeText(this, "called onPause", Toast.LENGTH_SHORT).show();
+        }
+//        Toast.makeText(this, "called onPause", Toast.LENGTH_SHORT).show();
     }
 
     private void replaceFragment(Fragment fragment){

@@ -19,11 +19,9 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioRecord
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -60,16 +58,9 @@ class MainActivity2 : AppCompatActivity() {
     private val audioClassificationListener = object : AudioClassificationListener {
         override fun onResult(results: List<Category>, inferenceTime: Long) {
             runOnUiThread {
-                if(results.isNotEmpty() && (results.get(0).label.toString() == "debora")) {
-                    if(results.get(0).score > 0.900000) {
-                        Toast.makeText(
-                            applicationContext,
-                            results.get(0).label.toString() + results.get(0).score.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        startActivity(Intent(applicationContext, AudioActivity::class.java))
-//                        audioHelper.stopAudioClassification()
-                    }
+                if (results.isNotEmpty() && results[0].label == "debora" && results[0].score > 0.980000) {
+                    audioHelper.stopAudioClassification()
+                    startActivity(Intent(applicationContext,  AudioActivity::class.java))
                 }
             }
         }
