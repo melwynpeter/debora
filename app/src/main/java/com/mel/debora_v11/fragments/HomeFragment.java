@@ -19,6 +19,7 @@ import com.mel.debora_v11.utilities.PreferenceManager;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -30,10 +31,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_home, container, false);
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
 
         preferenceManager = new PreferenceManager(getActivity());
+
+        // get greeting and Display TextView
+        binding.greetingTextView.setText(getGreeting());
 
         // set Username Display TextView
         binding.usernameDisplayTextView.setText(preferenceManager.getString(Constants.KEY_USERNAME));
@@ -66,5 +69,23 @@ public class HomeFragment extends Fragment {
         binding.activitiesRecyclerView.setAdapter(cardAdapter2);
         return binding.getRoot();
 
+    }
+
+    private String getGreeting(){
+        String greeting = "";
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        if(timeOfDay >= 0 && timeOfDay < 12){
+            greeting = "Good Morning!";
+        }else if(timeOfDay >= 12 && timeOfDay < 16){
+            greeting = "Good Afternoon";
+        }else if(timeOfDay >= 16 && timeOfDay < 21){
+            greeting = "Good Evening";
+        }
+        else{
+            greeting = "Good Evening";
+        }
+        return greeting;
     }
 }

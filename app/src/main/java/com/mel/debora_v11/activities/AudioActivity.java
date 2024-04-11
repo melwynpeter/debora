@@ -124,18 +124,19 @@ public class AudioActivity extends AppCompatActivity {
 
             @Override
             public void onResults(Bundle results) {
-//                ArrayList<String> data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-//                binding.output.setText(data.get(0));
-////                finish();
+                ArrayList<String> data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                binding.output.setText(data.get(0));
+                speechRecognizer.stopListening();
+                finish();
             }
 
             @Override
             public void onPartialResults(Bundle partialResults) {
-                ArrayList data = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                String word = (String) data.get(data.size() - 1);
-//                recognisedText.setText(word);
-                binding.output.setText(word);
-                finish();
+//                ArrayList data = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+//                String word = (String) data.get(data.size() - 1);
+////                recognisedText.setText(word);
+//                binding.output.setText(word);
+//                finish();
             }
 
             @Override

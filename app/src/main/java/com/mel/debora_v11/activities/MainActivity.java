@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.950000) {
+                    if (!results.isEmpty() && results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.950000) {
                         audioHelper.stopAudioClassification();
                         Toast.makeText(MainActivity.this, results.get(0).getScore() + "", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, AudioActivity.class));
@@ -133,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
             if (audioHelper.recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                 audioHelper.stopAudioClassification();
             }
+            audioHelper.stopAudioClassification();
+
+            
             audioHelper.initClassifier();
         }
 //        Toast.makeText(this, "called onResume", Toast.LENGTH_SHORT).show();
