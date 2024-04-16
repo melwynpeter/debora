@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Debora_v11"
         tools:targetApi="31">
         <activity
+            android:name=".fragments.accountMenu.AboutActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AudioActivity"
             android:exported="false" />
         <activity
@@ -39,7 +42,6 @@
             android:name=".activities.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
 
         <meta-data
             android:name="preloaded_fonts"

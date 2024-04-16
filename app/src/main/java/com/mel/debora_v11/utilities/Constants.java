@@ -22,4 +22,14 @@ public class Constants {
     public static final String KEY_CONVERSATION_CREATOR_ID = "conversationCreatorId";
 
 
+    // INTENTS
+
+    public static final String INTENT_GREETING = "greeting";
+    public static final String INTENT_GOODBYE = "goodbye";
+    public static final String INTENT_CREATOR = "creator";
+    public static final String INTENT_NAME = "name";
+    public static final String INTENT_EMAIL = "email";
+
+
+
 }

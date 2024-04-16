@@ -21,6 +21,8 @@ import android.window.OnBackInvokedDispatcher;
 import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.ActivityAudioBinding;
 import com.mel.debora_v11.databinding.ActivityMainBinding;
+import com.mel.debora_v11.utilities.AssistantHelper;
+import com.mel.debora_v11.utilities.TextToSpeech;
 
 import java.util.ArrayList;
 
@@ -35,6 +37,9 @@ public class AudioActivity extends AppCompatActivity {
     private Intent speechRecognizerIntent;
 
     private int count = 0;
+    TextToSpeech textToSpeech;
+
+    private boolean needOneMoreSpeech = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +64,10 @@ public class AudioActivity extends AppCompatActivity {
 
 //        speechRecognizer.startListening(speechRecognizerIntent);
         speechRecognizer.startListening(speechRecognizerIntent);
+
+
+        // INITIALIZE TEXT TO SPEECH
+        textToSpeech = new TextToSpeech();
 
         setListeners();
         speechRecognizerResult();
@@ -119,7 +128,9 @@ public class AudioActivity extends AppCompatActivity {
 
             @Override
             public void onError(int error) {
-                finish();
+                if(!needOneMoreSpeech){
+                    finish();
+                }
             }
 
             @Override
@@ -127,7 +138,13 @@ public class AudioActivity extends AppCompatActivity {
                 ArrayList<String> data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 binding.output.setText(data.get(0));
                 speechRecognizer.stopListening();
-                finish();
+                String response = sendData(data.get(0));
+                if(needsOneMoreSpeech(response)){
+                    recreate();
+                }
+                else{
+                    finish();
+                }
             }
 
             @Override
@@ -179,4 +196,23 @@ public class AudioActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
+
+    private String sendData(String data){
+        data = data.toLowerCase();
+        AssistantHelper assistantHelper = new AssistantHelper();
+        String response = assistantHelper.getResponse(data);
+        textToSpeech.convertTextToSpeech(this, response);
+        return response;
+    }
+
+    private boolean needsOneMoreSpeech(String response){
+        if(response.endsWith("*")){
+            needOneMoreSpeech = true;
+            return true;
+        }else{
+            needOneMoreSpeech = false;
+            return false;
+        }
+    }
+
 }

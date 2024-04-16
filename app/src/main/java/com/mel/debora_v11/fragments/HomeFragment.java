@@ -59,11 +59,11 @@ public class HomeFragment extends Fragment {
         binding.activitiesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         List<Card> cardTextList2 = new ArrayList<>();
-        cardTextList2.add(new Card("Activity Card 1"));
-        cardTextList2.add(new Card("Activity Card 2"));
-        cardTextList2.add(new Card("Activity Card 3"));
-        cardTextList2.add(new Card("Activity Card 4"));
-        cardTextList2.add(new Card("Activity Card 5"));
+        cardTextList2.add(new Card("generate some text"));
+        cardTextList2.add(new Card("generate an email"));
+        cardTextList2.add(new Card("set an alarm"));
+        cardTextList2.add(new Card("set a timer"));
+        cardTextList2.add(new Card("play a video from youtube"));
 
         CardAdapter cardAdapter2 = new CardAdapter(cardTextList2);
         binding.activitiesRecyclerView.setAdapter(cardAdapter2);
