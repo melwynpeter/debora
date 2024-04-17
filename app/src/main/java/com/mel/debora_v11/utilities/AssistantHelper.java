@@ -1,15 +1,22 @@
 package com.mel.debora_v11.utilities;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AssistantHelper {
     private String speechCommand;
+    private String s;
+    private String subject = "";
+
+    private final String TAG = "deb11";
 
     private String getIntent(String speechCommand){
         String intent = "";
 
-        String s = speechCommand.toLowerCase();
+        s = speechCommand.toLowerCase();
+
 
         // GREETING
         List<String> greetingPatterns = new ArrayList<>();
@@ -75,28 +82,226 @@ public class AssistantHelper {
         namePatterns.add("who am i talking to");
         namePatterns.add("what are you");
 
+        // TEXT
+        // GENERATE TEXT
+        List<String> generateTextPatterns = new ArrayList<>();
+        generateTextPatterns.add("generate text");
+        generateTextPatterns.add("generate some text");
+        generateTextPatterns.add("please generate text");
+        generateTextPatterns.add("please generate some text");
+        generateTextPatterns.add("write text");
+        generateTextPatterns.add("write some text");
+        generateTextPatterns.add("please write some text");
+        generateTextPatterns.add("please write text");
+        generateTextPatterns.add("can you generate text");
+        generateTextPatterns.add("can you please generate text");
+        generateTextPatterns.add("can you generate some text");
+        generateTextPatterns.add("can you please generate some text");
+        generateTextPatterns.add("generate text for me");
+        generateTextPatterns.add("please generate text for me");
+        generateTextPatterns.add("can you please generate some text for me");
+
+        // GENERATE TEXT WITH SUBJECT
+        List<String> generateTextWithSubjectPatterns = new ArrayList<>();
+        generateTextPatterns.add("generate text on <subject>");
+        generateTextPatterns.add("generate text about <subject>");
+        generateTextPatterns.add("generate some text on <subject>");
+        generateTextPatterns.add("generate some text about <subject>");
+        generateTextPatterns.add("please generate text on <subject>");
+        generateTextPatterns.add("please generate text about <subject>");
+        generateTextPatterns.add("please generate some text on <subject>");
+        generateTextPatterns.add("please generate some text about <subject>");
+        generateTextPatterns.add("write text on <subject>");
+        generateTextPatterns.add("write text about <subject>");
+        generateTextPatterns.add("write some text on <subject>");
+        generateTextPatterns.add("write some text about <subject>");
+        generateTextPatterns.add("please write some text on <subject>");
+        generateTextPatterns.add("please write some text about <subject>");
+        generateTextPatterns.add("please write text on <subject>");
+        generateTextPatterns.add("please write text about <subject>");
+        generateTextPatterns.add("can you generate text on <subject>");
+        generateTextPatterns.add("can you generate text about <subject>");
+        generateTextPatterns.add("can you please generate text on <subject>");
+        generateTextPatterns.add("can you please generate text about <subject>");
+        generateTextPatterns.add("can you generate some text on <subject>");
+        generateTextPatterns.add("can you generate some text about <subject>");
+        generateTextPatterns.add("can you please generate some text on <subject>");
+        generateTextPatterns.add("can you please generate some text about <subject>");
+        generateTextPatterns.add("generate text for me on <subject>");
+        generateTextPatterns.add("generate text for me about <subject>");
+        generateTextPatterns.add("please generate text for me on <subject>");
+        generateTextPatterns.add("please generate text for me about <subject>");
+        generateTextPatterns.add("can you please generate some text for me on <subject>");
+        generateTextPatterns.add("can you please generate some text for me about <subject>");
+
+        List<String> cleanedGenerateTextWithSubjectPatterns = removeWordsFromCollection(generateTextWithSubjectPatterns, " <subject>");
+
+        subject = extractSubject(s, cleanedGenerateTextWithSubjectPatterns);
+
         // EMAIL
-        List<String> emailPatterns = new ArrayList<>();
-        emailPatterns.add("generate email");
-        emailPatterns.add("write email");
-        emailPatterns.add("please generate email");
-        emailPatterns.add("please write email");
-        emailPatterns.add("generate an email");
-        emailPatterns.add("generate an email for me");
-        emailPatterns.add("can you generate an email");
-        emailPatterns.add("can you generate an email for me");
-        emailPatterns.add("please generate an email");
-        emailPatterns.add("please generate an email for me");
-        emailPatterns.add("write an email");
-        emailPatterns.add("please write an email");
-        emailPatterns.add("can you write an email for me");
-        emailPatterns.add("can you please wite an email for me");
-        emailPatterns.add("please generate an electronic mail");
-        emailPatterns.add("generate an electronic mail");
-        emailPatterns.add("write an electronic mail for");
-        emailPatterns.add("please write an electronic mail");
-        emailPatterns.add("write a mail for me");
-        emailPatterns.add("generate a mail for me");
+        // GENERATE EMAIL
+        List<String> generateEmailPatterns = new ArrayList<>();
+        generateEmailPatterns.add("generate email");
+        generateEmailPatterns.add("write email");
+        generateEmailPatterns.add("please generate email");
+        generateEmailPatterns.add("please write email");
+        generateEmailPatterns.add("generate an email");
+        generateEmailPatterns.add("generate an email for me");
+        generateEmailPatterns.add("can you generate an email");
+        generateEmailPatterns.add("can you generate an email for me");
+        generateEmailPatterns.add("please generate an email");
+        generateEmailPatterns.add("please generate an email for me");
+        generateEmailPatterns.add("write an email");
+        generateEmailPatterns.add("please write an email");
+        generateEmailPatterns.add("can you write an email for me");
+        generateEmailPatterns.add("can you please write an email for me");
+        generateEmailPatterns.add("please generate an electronic mail");
+        generateEmailPatterns.add("generate an electronic mail");
+        generateEmailPatterns.add("write an electronic mail for");
+        generateEmailPatterns.add("please write an electronic mail");
+        generateEmailPatterns.add("write a mail for me");
+        generateEmailPatterns.add("generate a mail for me");
+
+
+        // GENERATE EMAIL WITH SUBJECT
+        List<String> generateEmailWithSubjectPatterns = new ArrayList<>();
+        generateEmailWithSubjectPatterns.add("generate email on <subject>");
+        generateEmailWithSubjectPatterns.add("write email on <subject>");
+        generateEmailWithSubjectPatterns.add("generate email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("write email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("please generate email on <subject>");
+        generateEmailWithSubjectPatterns.add("please write email on <subject>");
+        generateEmailWithSubjectPatterns.add("generate an email on <subject>");
+        generateEmailWithSubjectPatterns.add("generate an email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("generate an email for me on <subject>");
+        generateEmailWithSubjectPatterns.add("generate an email for me regarding <subject>");
+        generateEmailWithSubjectPatterns.add("can you generate an email on <subject>");
+        generateEmailWithSubjectPatterns.add("can you generate an email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("can you generate an email for me on <subject>");
+        generateEmailWithSubjectPatterns.add("can you generate an email for me regarding <subject>");
+        generateEmailWithSubjectPatterns.add("please generate an email on <subject>");
+        generateEmailWithSubjectPatterns.add("please generate an email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("please generate an email for me on <subject>");
+        generateEmailWithSubjectPatterns.add("please generate an email for me regarding <subject>");
+        generateEmailWithSubjectPatterns.add("write an email on <subject>");
+        generateEmailWithSubjectPatterns.add("write an email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("please write an email on <subject>");
+        generateEmailWithSubjectPatterns.add("please write an email regarding <subject>");
+        generateEmailWithSubjectPatterns.add("can you write an email for me on <subject>");
+        generateEmailWithSubjectPatterns.add("can you write an email for me regarding <subject>");
+        generateEmailWithSubjectPatterns.add("can you please write an email for me on <subject>");
+        generateEmailWithSubjectPatterns.add("can you please write an email for me regarding <subject>");
+        generateEmailWithSubjectPatterns.add("please generate an electronic mail on <subject>");
+        generateEmailWithSubjectPatterns.add("please generate an electronic mail regarding <subject>");
+        generateEmailWithSubjectPatterns.add("generate an electronic mail on <subject>");
+        generateEmailWithSubjectPatterns.add("generate an electronic mail regarding <subject>");
+        generateEmailWithSubjectPatterns.add("write an electronic mail on <subject>");
+        generateEmailWithSubjectPatterns.add("write an electronic mail regarding <subject>");
+        generateEmailWithSubjectPatterns.add("please write an electronic mail on <subject>");
+        generateEmailWithSubjectPatterns.add("please write an electronic mail regarding <subject>");
+        generateEmailWithSubjectPatterns.add("write a mail for me on <subject>");
+        generateEmailWithSubjectPatterns.add("write a mail for me regarding <subject>");
+        generateEmailWithSubjectPatterns.add("generate a mail for me on <subject>");
+        generateEmailWithSubjectPatterns.add("generate a mail for me regarding <subject>");
+        List<String> cleanedGenerateEmailWithSubjectPattern = removeWordsFromCollection(generateEmailWithSubjectPatterns, " <subject>");
+
+        subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
+
+        // GENERATE EMAIL WITH TO AND SUBJECT
+        List<String> generateEmailWithToAndSubjectPatterns = new ArrayList<>();
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to <person> with the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to <person> on the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to <person> on the subject of <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to the <person> with the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to the <person> on the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to the <person> on the subject of <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to my <person> with the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to my <person> on the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate email to send to my <person> on the subject of <subject>");
+
+        generateEmailWithSubjectPatterns.add("write email to <person> with subject <subject>");
+        generateEmailWithSubjectPatterns.add("write email to <person> with the subject <subject>");
+        generateEmailWithSubjectPatterns.add("write email to the <person> with the subject <subject>");
+        generateEmailWithSubjectPatterns.add("write email to the <person> on the subject <subject>");
+        generateEmailWithSubjectPatterns.add("write email to the <person> on the subject of <subject>");
+
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to <person> with the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to <person> on the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to <person> on the subject of <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to the <person> with the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to the <person> on the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to the <person> on the subject of <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to my <person> with the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to my <person> on the subject <subject>");
+        generateEmailWithToAndSubjectPatterns.add("generate an email to send to my <person> on the subject of <subject>");
+
+        generateEmailWithSubjectPatterns.add("write an email to <person> with subject <subject>");
+        generateEmailWithSubjectPatterns.add("write an email to <person> with the subject <subject>");
+        generateEmailWithSubjectPatterns.add("write an email to the <person> with the subject <subject>");
+        generateEmailWithSubjectPatterns.add("write an email to the <person> on the subject <subject>");
+        generateEmailWithSubjectPatterns.add("write an email to the <person> on the subject of <subject>");
+
+
+        List<String> cleanedGenerateEmailWithToAndSubjectPattern = removeWordsFromCollection(generateEmailWithToAndSubjectPatterns, " <subject>");
+        cleanedGenerateEmailWithToAndSubjectPattern = removeWordsFromCollection(cleanedGenerateEmailWithToAndSubjectPattern, " <person>");
+
+        subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
+
+
+        // ALARM
+        // SET AN ALARM
+        List<String> setAlarm = new ArrayList<>();
+        setAlarm.add("set alarm");
+        setAlarm.add("set an alarm");
+        setAlarm.add("please set an alarm");
+        setAlarm.add("can you please set an alarm");
+
+        // SET AN ALARM WITH TIME
+        List<String> setAlarmWithTime = new ArrayList<>();
+        setAlarmWithTime.add("set alarm for <time>");
+        setAlarmWithTime.add("set the alarm for <time>");
+        setAlarmWithTime.add("set an alarm for <time>");
+        setAlarmWithTime.add("please set an alarm for <time>");
+        setAlarmWithTime.add("can you please set an alarm for <time>");
+
+        // SET AN ALARM WITH TIME AND DATE
+        List<String> setAlarmWithTimeAndDate = new ArrayList<>();
+        setAlarmWithTimeAndDate.add("set alarm for <time> for <date>");
+        setAlarmWithTimeAndDate.add("set the alarm for <time> for <date>");
+        setAlarmWithTimeAndDate.add("set an alarm for <time> for <date>");
+        setAlarmWithTimeAndDate.add("please set an alarm for <time> for <date>");
+        setAlarmWithTimeAndDate.add("can you please set an alarm for <time> for <date>");
+
+        // TIMER
+        List<String> setTimer = new ArrayList<>();
+        setAlarmWithTime.add("set timer");
+        setAlarmWithTime.add("set the timer");
+        setAlarmWithTime.add("set a timer");
+        setAlarmWithTime.add("please set a timer");
+        setAlarmWithTime.add("can you please set a timer");
+
+        // TIMER WITH TIME
+        List<String> setTimerWithTime = new ArrayList<>();
+        setAlarmWithTime.add("set timer for <time>");
+        setAlarmWithTime.add("set the timer for <time>");
+        setAlarmWithTime.add("set a timer for <time>");
+        setAlarmWithTime.add("please set a timer for <time>");
+        setAlarmWithTime.add("can you please set a timer for <time>");
+
+
+
+        // EXTERNAL APPS
+        // YOUTUBE
+        // OPEN YOUTUBE
+        List<String> openYoutube = new ArrayList<>();
+        openYoutube.add("open youtube");
+        openYoutube.add("please open youtube");
+
+        // OPEN WHATSAPP
+        List<String> openWhatsapp = new ArrayList<>();
+        openYoutube.add("open whatsapp");
+        openYoutube.add("please open whatsapp");
+
 
 
         //This first removes all non-letter characters, folds to lowercase, then splits the input, doing all the work in a single line
@@ -110,8 +315,16 @@ public class AssistantHelper {
             intent = Constants.INTENT_CREATOR;
         } else if (namePatterns.contains(s)) {
             intent = Constants.INTENT_NAME;
-        }else if (emailPatterns.contains(s)) {
-            intent = Constants.INTENT_EMAIL;
+        }else if (generateTextPatterns.contains(s)) {
+            intent = Constants.INTENT_GENERATE_TEXT;
+        }else if (doesStartsWithCollection(s, cleanedGenerateTextWithSubjectPatterns)) {
+            intent = Constants.INTENT_GENERATE_TEXT_WITH_SUBJECT;
+            subject = extractSubject(s, cleanedGenerateTextWithSubjectPatterns);
+        }else if (generateEmailPatterns.contains(s)) {
+            intent = Constants.INTENT_GENERATE_EMAIL;
+        }else if (doesStartsWithCollection(s, cleanedGenerateEmailWithSubjectPattern)) {
+            intent = Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT;
+            subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
         }
         return intent;
     }
@@ -120,62 +333,89 @@ public class AssistantHelper {
         String response = "";
         String intent = getIntent(speechCommand);
 
-        // GREETING
-        List<String> greetingResponses = new ArrayList<>();
-        greetingResponses.add("hello!");
-        greetingResponses.add("good to see you again!");
-        greetingResponses.add("hi there how can i help?");
-        greetingResponses.add("hello, how can i assist?");
-        greetingResponses.add("hi, how can i assist you?");
-
-        // GOODBYE
-        List<String> goodbyeResponses = new ArrayList<>();
-        goodbyeResponses.add("talk to you later");
-        goodbyeResponses.add("see you soon");
-        greetingResponses.add("goodbye!");
-
-        // CREATOR
-        List<String> creatorResponses = new ArrayList<>();
-        creatorResponses.add("I was developed by Melwyn Peter.");
-        creatorResponses.add("I was developed by Melwyn Peter, an excellent Machine Learnng Expert.");
-        creatorResponses.add("I was developed by Melwyn Peter, an excellent Machine Learning Engineer.");
-
-        // NAME
-        List<String> nameResponses = new ArrayList<>();
-        nameResponses.add("you can call me debora.");
-        nameResponses.add("Im debora");
-        nameResponses.add("I am a virtual assistant, you can call me debora");
-        nameResponses.add("im debora, your assisant");
-        nameResponses.add("im debora, your assisant, how can i assist you?");
-
-        // EMAIL
-        List<String> emailResponses = new ArrayList<>();
-        emailResponses.add("sure what topic would you like me to generate an email on");
-        emailResponses.add("sure what topic would you like me to write an email on");
-        emailResponses.add("what subject would you like me to generate an email on");
-        emailResponses.add("what subject would you like me to write an email on");
-        emailResponses.add("sure, please specify the subject");
-        emailResponses.add("sure please specify the topic");
-        emailResponses.add("sure please specify the subject for me to generate an email");
-        emailResponses.add("sure please specify the topic for me to generate an email");
-
-
+        PatternsAndResponses patternsAndResponses = new PatternsAndResponses();
 
         if(intent.equals(Constants.INTENT_GREETING)){
-            response = greetingResponses.get(generateRandomNumber(0, greetingResponses.size()));
+//            response = greetingResponses.get(generateRandomNumber(0, greetingResponses.size()));
+            response = patternsAndResponses.getResponses(Constants.INTENT_GREETING).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_GREETING).size()));
         } else if (intent.equals(Constants.INTENT_GOODBYE)) {
-            response = goodbyeResponses.get(generateRandomNumber(0, goodbyeResponses.size()));
+//            response = goodbyeResponses.get(generateRandomNumber(0, goodbyeResponses.size()));
+            response = patternsAndResponses.getResponses(Constants.INTENT_GOODBYE).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_GOODBYE).size()));
+
         } else if (intent.equals(Constants.INTENT_CREATOR)) {
-            response = creatorResponses.get(generateRandomNumber(0, creatorResponses.size()));
+//            response = creatorResponses.get(generateRandomNumber(0, creatorResponses.size()));
+            response = patternsAndResponses.getResponses(Constants.INTENT_CREATOR).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_CREATOR).size()));
+
         } else if (intent.equals(Constants.INTENT_NAME)) {
-            response = nameResponses.get(generateRandomNumber(0, nameResponses.size()));
-        }else if (intent.equals(Constants.INTENT_EMAIL)) {
-            response = emailResponses.get(generateRandomNumber(0, emailResponses.size())) + "*";
+//            response = nameResponses.get(generateRandomNumber(0, nameResponses.size()));
+            response = patternsAndResponses.getResponses(Constants.INTENT_NAME).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_NAME).size()));
+
+        }else if (intent.equals(Constants.INTENT_GENERATE_TEXT)) {
+//            response = generateTextResponses.get(generateRandomNumber(0, generateTextResponses.size())) + "*";
+            response = patternsAndResponses.getResponses(Constants.INTENT_GENERATE_TEXT).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_GENERATE_TEXT).size())) + "*";
+
+        }else if (intent.equals(Constants.INTENT_GENERATE_EMAIL)) {
+//            response = generateEmailResponses.get(generateRandomNumber(0, generateEmailResponses.size())) + "*";
+            response = patternsAndResponses.getResponses(Constants.INTENT_GENERATE_EMAIL).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_GENERATE_EMAIL).size())) + "*";
+
+        }else if (intent.equals(Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT)) {
+//            response = generateEmailWithSubjectResponses.get(generateRandomNumber(0, generateEmailWithSubjectResponses.size())) + subject;
+            response = patternsAndResponses.getResponses(Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT).size()));
+
+        }else if (intent.equals(Constants.INTENT_ALARM)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_ALARM).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_ALARM).size())) + "*";
+        }else if (intent.equals(Constants.INTENT_ALARM_WITH_TIME)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_ALARM_WITH_TIME).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_ALARM_WITH_TIME).size()));
+        }else if (intent.equals(Constants.INTENT_ALARM_WITH_TIME_AND_DATE)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_ALARM_WITH_TIME_AND_DATE).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_ALARM_WITH_TIME_AND_DATE).size()));
+        }else if (intent.equals(Constants.INTENT_TIMER)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_TIMER).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_TIMER).size()));
+        }else if (intent.equals(Constants.INTENT_TIMER_WITH_TIME)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_TIMER_WITH_TIME).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_TIMER_WITH_TIME).size()));
+        }else if (intent.equals(Constants.INTENT_YOUTUBE)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_YOUTUBE).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_YOUTUBE).size()));
+        }else if (intent.equals(Constants.INTENT_WHATSAPP)) {
+            response = patternsAndResponses.getResponses(Constants.INTENT_WHATSAPP).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_WHATSAPP).size()));
         }
         return response;
     }
 
     private int generateRandomNumber(int min, int max){
         return (int) ((Math.random() * (max - min)) + min);
+    }
+
+    private List<String> removeWordsFromCollection(List<String> patternList, String wordToRemove){
+        List<String> cleanedList = new ArrayList<>();
+        for (String pattern :
+                patternList) {
+            if (pattern.contains(wordToRemove)){
+                pattern = pattern.replaceAll(wordToRemove, "");
+                cleanedList.add(pattern);
+            }
+        }
+        return cleanedList;
+    }
+
+    private boolean doesStartsWithCollection(String stringToCheck, List<String> patternList){
+        for (String pattern :
+                patternList) {
+            Log.d(TAG, "doesStartsWithCollection:" + pattern);
+            if (stringToCheck.startsWith(pattern)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String extractSubject(String s, List<String> textToCheck){
+
+        for (String pattern :
+                textToCheck) {
+            if(s.startsWith(pattern)){
+                s = s.replaceAll(pattern + " ", "");
+                return s;
+            }
+        }
+        return "";
     }
 }

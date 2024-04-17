@@ -28,7 +28,17 @@ public class Constants {
     public static final String INTENT_GOODBYE = "goodbye";
     public static final String INTENT_CREATOR = "creator";
     public static final String INTENT_NAME = "name";
-    public static final String INTENT_EMAIL = "email";
+    public static final String INTENT_GENERATE_TEXT = "generateText";
+    public static final String INTENT_GENERATE_TEXT_WITH_SUBJECT = "generateTextWithSubject";
+    public static final String INTENT_GENERATE_EMAIL = "generateEmail";
+    public static final String INTENT_GENERATE_EMAIL_WITH_SUBJECT = "generateEmailWithSubject";
+    public static final String INTENT_ALARM = "alarm";
+    public static final String INTENT_ALARM_WITH_TIME = "alarmWithTime";
+    public static final String INTENT_ALARM_WITH_TIME_AND_DATE = "alarmWithTimeAndDate";
+    public static final String INTENT_TIMER = "timer";
+    public static final String INTENT_TIMER_WITH_TIME = "timerWithTime";
+    public static final String INTENT_YOUTUBE = "youtube";
+    public static final String INTENT_WHATSAPP = "whatsapp";
 
 
 
