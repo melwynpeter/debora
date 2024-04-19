@@ -250,57 +250,60 @@ public class AssistantHelper {
 
         // ALARM
         // SET AN ALARM
-        List<String> setAlarm = new ArrayList<>();
-        setAlarm.add("set alarm");
-        setAlarm.add("set an alarm");
-        setAlarm.add("please set an alarm");
-        setAlarm.add("can you please set an alarm");
+        List<String> setAlarmPatterns = new ArrayList<>();
+        setAlarmPatterns.add("set alarm");
+        setAlarmPatterns.add("set an alarm");
+        setAlarmPatterns.add("please set an alarm");
+        setAlarmPatterns.add("can you please set an alarm");
 
         // SET AN ALARM WITH TIME
-        List<String> setAlarmWithTime = new ArrayList<>();
-        setAlarmWithTime.add("set alarm for <time>");
-        setAlarmWithTime.add("set the alarm for <time>");
-        setAlarmWithTime.add("set an alarm for <time>");
-        setAlarmWithTime.add("please set an alarm for <time>");
-        setAlarmWithTime.add("can you please set an alarm for <time>");
+        List<String> setAlarmWithTimePatterns = new ArrayList<>();
+        setAlarmWithTimePatterns.add("set alarm for <time>");
+        setAlarmWithTimePatterns.add("set the alarm for <time>");
+        setAlarmWithTimePatterns.add("set an alarm for <time>");
+        setAlarmWithTimePatterns.add("please set an alarm for <time>");
+        setAlarmWithTimePatterns.add("can you please set an alarm for <time>");
+        List<String> cleanedSetAlarmWithTimePatterns = removeWordsFromCollection(setAlarmWithTimePatterns, " <time>");
 
         // SET AN ALARM WITH TIME AND DATE
-        List<String> setAlarmWithTimeAndDate = new ArrayList<>();
-        setAlarmWithTimeAndDate.add("set alarm for <time> for <date>");
-        setAlarmWithTimeAndDate.add("set the alarm for <time> for <date>");
-        setAlarmWithTimeAndDate.add("set an alarm for <time> for <date>");
-        setAlarmWithTimeAndDate.add("please set an alarm for <time> for <date>");
-        setAlarmWithTimeAndDate.add("can you please set an alarm for <time> for <date>");
+        List<String> setAlarmWithTimeAndDatePatterns = new ArrayList<>();
+        setAlarmWithTimeAndDatePatterns.add("set alarm for <time> for <date>");
+        setAlarmWithTimeAndDatePatterns.add("set the alarm for <time> for <date>");
+        setAlarmWithTimeAndDatePatterns.add("set an alarm for <time> for <date>");
+        setAlarmWithTimeAndDatePatterns.add("please set an alarm for <time> for <date>");
+        setAlarmWithTimeAndDatePatterns.add("can you please set an alarm for <time> for <date>");
+        List<String> cleanedSetAlarmWithTimeAndDatePatterns = removeWordsFromCollection(setAlarmWithTimeAndDatePatterns, " <time>");
+        cleanedSetAlarmWithTimeAndDatePatterns = removeWordsFromCollection(setAlarmWithTimeAndDatePatterns, " <date>");
 
         // TIMER
-        List<String> setTimer = new ArrayList<>();
-        setAlarmWithTime.add("set timer");
-        setAlarmWithTime.add("set the timer");
-        setAlarmWithTime.add("set a timer");
-        setAlarmWithTime.add("please set a timer");
-        setAlarmWithTime.add("can you please set a timer");
+        List<String> setTimerPatterns = new ArrayList<>();
+        setAlarmWithTimePatterns.add("set timer");
+        setAlarmWithTimePatterns.add("set the timer");
+        setAlarmWithTimePatterns.add("set a timer");
+        setAlarmWithTimePatterns.add("please set a timer");
+        setAlarmWithTimePatterns.add("can you please set a timer");
 
         // TIMER WITH TIME
-        List<String> setTimerWithTime = new ArrayList<>();
-        setAlarmWithTime.add("set timer for <time>");
-        setAlarmWithTime.add("set the timer for <time>");
-        setAlarmWithTime.add("set a timer for <time>");
-        setAlarmWithTime.add("please set a timer for <time>");
-        setAlarmWithTime.add("can you please set a timer for <time>");
+        List<String> setTimerWithTimePatterns = new ArrayList<>();
+        setAlarmWithTimePatterns.add("set timer for <time>");
+        setAlarmWithTimePatterns.add("set the timer for <time>");
+        setAlarmWithTimePatterns.add("set a timer for <time>");
+        setAlarmWithTimePatterns.add("please set a timer for <time>");
+        setAlarmWithTimePatterns.add("can you please set a timer for <time>");
 
 
 
         // EXTERNAL APPS
         // YOUTUBE
         // OPEN YOUTUBE
-        List<String> openYoutube = new ArrayList<>();
-        openYoutube.add("open youtube");
-        openYoutube.add("please open youtube");
+        List<String> openYoutubePatterns = new ArrayList<>();
+        openYoutubePatterns.add("open youtube");
+        openYoutubePatterns.add("please open youtube");
 
         // OPEN WHATSAPP
-        List<String> openWhatsapp = new ArrayList<>();
-        openYoutube.add("open whatsapp");
-        openYoutube.add("please open whatsapp");
+        List<String> openWhatsappPatterns = new ArrayList<>();
+        openYoutubePatterns.add("open whatsapp");
+        openYoutubePatterns.add("please open whatsapp");
 
 
 
@@ -322,6 +325,18 @@ public class AssistantHelper {
             subject = extractSubject(s, cleanedGenerateTextWithSubjectPatterns);
         }else if (generateEmailPatterns.contains(s)) {
             intent = Constants.INTENT_GENERATE_EMAIL;
+        }else if (doesStartsWithCollection(s, cleanedGenerateEmailWithSubjectPattern)) {
+            intent = Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT;
+            subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
+        }else if (setAlarmPatterns.contains(s)) {
+            intent = Constants.INTENT_ALARM;
+        }else if (doesStartsWithCollection(s, cleanedSetAlarmWithTimePatterns)) {
+            intent = Constants.INTENT_ALARM_WITH_TIME;
+            subject = extractSubject(s, cleanedSetAlarmWithTimePatterns);
+        }else if (doesStartsWithCollection(s, cleanedSetAlarmWithTimeAndDatePatterns)) {
+            intent = Constants.INTENT_ALARM_WITH_TIME_AND_DATE;
+            subject = extractSubject(s, cleanedSetAlarmWithTimeAndDatePatterns);
+            
         }else if (doesStartsWithCollection(s, cleanedGenerateEmailWithSubjectPattern)) {
             intent = Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT;
             subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
@@ -417,5 +432,11 @@ public class AssistantHelper {
             }
         }
         return "";
+    }
+
+    private String extractSecondSubject(String s, String wordToRemove, List<String> textToCheck){
+        List<String> cleanedTextToCheck = removeWordsFromCollection(textToCheck, wordToRemove);
+        s = extractSubject(s, cleanedTextToCheck);
+        return s;
     }
 }

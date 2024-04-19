@@ -127,7 +127,7 @@ public class PatternsAndResponses {
             List<String> openYoutubeResponses = new ArrayList<>();
             openYoutubeResponses.add("sure, opening youtube");
             openYoutubeResponses.add("opening youtube");
-        }else if (intent.equals(Constants.INTENT_YOUTUBE)) {
+        }else if (intent.equals(Constants.INTENT_WHATSAPP)) {
             // EXTERNAL APPS
             // OPEN WHATSAPP
             List<String> openWhatsappResponses = new ArrayList<>();

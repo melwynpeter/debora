@@ -57,11 +57,36 @@ class TextGenerationKotlin {
         return fullResponse
     }
 
+    suspend fun textClassification(prompt: String, intents: ArrayList<String>,  owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+        var intentString = intents.joinToString(
+            prefix = "[",
+            separator = ",",
+            postfix = "]",
+            truncated = "...",
+            transform = { it.lowercase() }
+        )
+        var intentPrompt: String =
+            "Classify the given prompt: {$prompt} into the given labels: {$intentString} and return only the label along with the probability and some extra information if required such as(time[in mm:ss], date[in dd:mm:yy] or some text) in the form of an array"
+
+
+        val response = generativeModel.generateContent(intentPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        return fullResponse
+    }
+
 
 
 
     fun generateConversationAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversation(prompt, owner) }
     fun generateConversationNameAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversationName(prompt, owner) }
+    fun textClassificationAsync(prompt: String, intents: ArrayList<String>, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { textClassification(prompt, intents, owner) }
 
 
 
