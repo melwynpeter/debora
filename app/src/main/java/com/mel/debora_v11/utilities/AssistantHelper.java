@@ -414,7 +414,6 @@ public class AssistantHelper {
     private boolean doesStartsWithCollection(String stringToCheck, List<String> patternList){
         for (String pattern :
                 patternList) {
-            Log.d(TAG, "doesStartsWithCollection:" + pattern);
             if (stringToCheck.startsWith(pattern)){
                 return true;
             }

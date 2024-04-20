@@ -21,6 +21,7 @@ import android.window.OnBackInvokedDispatcher;
 import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.ActivityAudioBinding;
 import com.mel.debora_v11.databinding.ActivityMainBinding;
+import com.mel.debora_v11.utilities.Assistant;
 import com.mel.debora_v11.utilities.AssistantHelper;
 import com.mel.debora_v11.utilities.TextToSpeech;
 
@@ -201,6 +202,8 @@ public class AudioActivity extends AppCompatActivity {
         data = data.toLowerCase();
         AssistantHelper assistantHelper = new AssistantHelper();
         String response = assistantHelper.getResponse(data);
+        Assistant assistant = new Assistant();
+        String response1 = assistant.getResponse(data, this);
         textToSpeech.convertTextToSpeech(this, response);
         return response;
     }

@@ -1,5 +1,6 @@
 package com.mel.debora_v11.models
 
+import android.util.Log
 import androidx.lifecycle.ViewModelStoreOwner
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
@@ -10,6 +11,8 @@ import java.util.concurrent.CompletableFuture
 
 
 class TextGenerationKotlin {
+
+    val TAG = "deb_11"
     val generativeModel = GenerativeModel(
         // For text-only input, use the gemini-pro model
         modelName = "gemini-pro",
@@ -72,12 +75,14 @@ class TextGenerationKotlin {
             transform = { it.lowercase() }
         )
         var intentPrompt: String =
-            "Classify the given prompt: {$prompt} into the given labels: {$intentString} and return only the label along with the probability and some extra information if required such as(time[in mm:ss], date[in dd:mm:yy] or some text) in the form of an array"
+            "Classify prompt: {$prompt} into a label: {$intentString} and return only label, probability, extra information(such as(time[in mm:ss], date[in dd:mm:yy] or some text(like topic to generate text or subject, recipient of email or music to play or youtube video to open etc...) else keep it null) if required strictly in the form of array"
 
 
         val response = generativeModel.generateContent(intentPrompt)
         var fullResponse = response.text ?: ""
         print(response.text)
+        Log.d(TAG, "textClassification: $intentString and ${response.text}")
+
         return fullResponse
     }
 
