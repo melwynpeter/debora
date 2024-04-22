@@ -200,11 +200,9 @@ public class AudioActivity extends AppCompatActivity {
 
     private String sendData(String data){
         data = data.toLowerCase();
-        AssistantHelper assistantHelper = new AssistantHelper();
-        String response = assistantHelper.getResponse(data);
         Assistant assistant = new Assistant();
-        String response1 = assistant.getResponse(data, this);
-        textToSpeech.convertTextToSpeech(this, response);
+        String response = assistant.getResponse(data, this);
+//        textToSpeech.convertTextToSpeech(this, response);
         return response;
     }
 

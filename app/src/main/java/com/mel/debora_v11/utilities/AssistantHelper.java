@@ -315,9 +315,9 @@ public class AssistantHelper {
         } else if (goodbyePatterns.contains(s)) {
             intent = Constants.INTENT_GOODBYE;
         } else if (creatorPatterns.contains(s)) {
-            intent = Constants.INTENT_CREATOR;
+            intent = Constants.INTENT_CREATOR_OF_MODEL;
         } else if (namePatterns.contains(s)) {
-            intent = Constants.INTENT_NAME;
+            intent = Constants.INTENT_NAME_OF_MODEL;
         }else if (generateTextPatterns.contains(s)) {
             intent = Constants.INTENT_GENERATE_TEXT;
         }else if (doesStartsWithCollection(s, cleanedGenerateTextWithSubjectPatterns)) {
@@ -357,13 +357,13 @@ public class AssistantHelper {
 //            response = goodbyeResponses.get(generateRandomNumber(0, goodbyeResponses.size()));
             response = patternsAndResponses.getResponses(Constants.INTENT_GOODBYE).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_GOODBYE).size()));
 
-        } else if (intent.equals(Constants.INTENT_CREATOR)) {
+        } else if (intent.equals(Constants.INTENT_CREATOR_OF_MODEL)) {
 //            response = creatorResponses.get(generateRandomNumber(0, creatorResponses.size()));
-            response = patternsAndResponses.getResponses(Constants.INTENT_CREATOR).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_CREATOR).size()));
+            response = patternsAndResponses.getResponses(Constants.INTENT_CREATOR_OF_MODEL).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_CREATOR_OF_MODEL).size()));
 
-        } else if (intent.equals(Constants.INTENT_NAME)) {
+        } else if (intent.equals(Constants.INTENT_NAME_OF_MODEL)) {
 //            response = nameResponses.get(generateRandomNumber(0, nameResponses.size()));
-            response = patternsAndResponses.getResponses(Constants.INTENT_NAME).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_NAME).size()));
+            response = patternsAndResponses.getResponses(Constants.INTENT_NAME_OF_MODEL).get(generateRandomNumber(0, patternsAndResponses.getResponses(Constants.INTENT_NAME_OF_MODEL).size()));
 
         }else if (intent.equals(Constants.INTENT_GENERATE_TEXT)) {
 //            response = generateTextResponses.get(generateRandomNumber(0, generateTextResponses.size())) + "*";

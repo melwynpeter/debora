@@ -25,14 +25,14 @@ public class PatternsAndResponses {
             goodbyeResponses.add("see you soon");
             goodbyeResponses.add("goodbye!");
             return goodbyeResponses;
-        }else if (intent.equals(Constants.INTENT_CREATOR)) {
+        }else if (intent.equals(Constants.INTENT_CREATOR_OF_MODEL)) {
             // CREATOR
             List<String> creatorResponses = new ArrayList<>();
             creatorResponses.add("I was developed by Melwyn Peter.");
             creatorResponses.add("I was developed by Melwyn Peter, an excellent Machine Learnng Expert.");
             creatorResponses.add("I was developed by Melwyn Peter, an excellent Machine Learning Engineer.");
             return creatorResponses;
-        }else if (intent.equals(Constants.INTENT_NAME)) {
+        }else if (intent.equals(Constants.INTENT_NAME_OF_MODEL)) {
             // NAME
             List<String> nameResponses = new ArrayList<>();
             nameResponses.add("you can call me debora.");

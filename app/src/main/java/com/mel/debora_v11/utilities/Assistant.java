@@ -18,26 +18,28 @@ public class Assistant {
 
     final String TAG = "deb11";
     public ArrayList<String> getIntents() {
-        intents.add("greeting");
-        intents.add("goodbye");
-        intents.add("creator_of_model");
-        intents.add("name_of_model");
-        intents.add("generate_email");
-        intents.add("generate_text");
-        intents.add("alarm");
-        intents.add("alarm_with_time");
-        intents.add("alarm_with_time_and_date");
-        intents.add("timer");
-        intents.add("timer_with_time");
-        intents.add("youtube");
-        intents.add("general_qa");
+        intents.add(Constants.INTENT_GREETING);
+        intents.add(Constants.INTENT_GOODBYE);
+        intents.add(Constants.INTENT_CREATOR_OF_MODEL);
+        intents.add(Constants.INTENT_NAME_OF_MODEL);
+        intents.add(Constants.INTENT_GENERATE_EMAIL);
+        intents.add(Constants.INTENT_GENERATE_TEXT);
+        intents.add(Constants.INTENT_ALARM);
+        intents.add(Constants.INTENT_ALARM_WITH_TIME);
+        intents.add(Constants.INTENT_ALARM_WITH_TIME_AND_DATE);
+        intents.add(Constants.INTENT_TIMER);
+        intents.add(Constants.INTENT_TIMER_WITH_TIME);
+        intents.add(Constants.INTENT_YOUTUBE);
+        intents.add(Constants.INTENT_GENERAQA);
+        intents.add(Constants.INTENT_INVALID_ACTION);
         return intents;
     }
 
     public String getResponse(String prompt, ViewModelStoreOwner viewModelStoreOwner){
         String response = "";
-        String prediction = textClassification(prompt, getIntents(), viewModelStoreOwner);
-        Log.d(TAG, "getResponse: " + prediction);
+        String intentPrediction = textClassification(prompt, getIntents(), viewModelStoreOwner);
+        Log.d(TAG, "getResponse: " + intentPrediction);
+
 
         return response;
     }
@@ -82,6 +84,10 @@ public class Assistant {
 //            subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
 //        }
         return intent;
+    }
+
+    private void doTask(){
+
     }
 
 

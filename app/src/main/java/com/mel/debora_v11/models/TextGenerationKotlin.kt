@@ -3,8 +3,10 @@ package com.mel.debora_v11.models
 import android.util.Log
 import androidx.lifecycle.ViewModelStoreOwner
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.GenerateContentResponse
 import com.google.ai.client.generativeai.type.content
 import com.mel.debora_v11.activities.MainActivity
+import com.mel.debora_v11.utilities.Constants
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import java.util.concurrent.CompletableFuture
@@ -71,17 +73,43 @@ class TextGenerationKotlin {
             prefix = "[",
             separator = ",",
             postfix = "]",
-            truncated = "...",
-            transform = { it.lowercase() }
+            truncated = "..."
         )
-        var intentPrompt: String =
-            "Classify prompt: {$prompt} into a label: {$intentString} and return only label, probability, extra information(such as(time[in mm:ss], date[in dd:mm:yy] or some text(like topic to generate text or subject, recipient of email or music to play or youtube video to open etc...) else keep it null) if required strictly in the form of array"
+//        var intentPrompt: String =
+//            "Classify prompt: {$prompt} into a label: {$intentString} and return only label, probability, extra information(such as(time[in mm:ss], date[in dd:mm:yy] or some text(like topic to generate text or subject, recipient of email or music to play or youtube video to open etc...) else keep it null) if required strictly in the form of array"
+
+        var intentPrompt: String = "Classify prompt: {$prompt} into the corresponding label: {$intentString} and return only label as string."
+
 
 
         val response = generativeModel.generateContent(intentPrompt)
-        var fullResponse = response.text ?: ""
+        var extractPrompt: String = ""
+        val extractedResponse: GenerateContentResponse
+        val extractedResponse2: GenerateContentResponse
+        var fullResponse: String = ""
+
+        if(response.text == Constants.INTENT_GENERATE_EMAIL){
+//            extractPrompt = "Extract subject and recipient from {$prompt}, only return [subject(if available else null) and recipient(if available else null)] --> in simple python list format -> ['','']."
+            extractPrompt = "Extract subject from {$prompt}, only return subject(if available else null) as a string"
+            extractedResponse = generativeModel.generateContent(extractPrompt)
+            extractPrompt = "Extract recipient from {$prompt}, only return recipient(if available else null) as a string"
+            extractedResponse2 = generativeModel.generateContent(extractPrompt)
+            fullResponse = response.text + "*" + extractedResponse.text + "*" + extractedResponse2
+        }else if (response.text == Constants.INTENT_GENERATE_TEXT){
+            extractPrompt = "Extract subject or topic {$prompt}, only return subject or topic as a string."
+            extractedResponse = generativeModel.generateContent(extractPrompt)
+            fullResponse = response.text + "*" + extractedResponse.text
+        }else if (response.text == Constants.INTENT_ALARM_WITH_TIME || response.text == Constants.INTENT_TIMER_WITH_TIME){
+            extractPrompt = "Extract time {$prompt}, only return time[format = 'hh:mm:ss'] as a string"
+            extractedResponse = generativeModel.generateContent(extractPrompt)
+            fullResponse = response.text + "*" + extractedResponse.text
+        }else{
+            fullResponse = response.text ?: ""
+        }
+
         print(response.text)
         Log.d(TAG, "textClassification: $intentString and ${response.text}")
+
 
         return fullResponse
     }
