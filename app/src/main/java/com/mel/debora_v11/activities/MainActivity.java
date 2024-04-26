@@ -140,6 +140,25 @@ public class MainActivity extends AppCompatActivity {
         }
 //        Toast.makeText(this, "called onResume", Toast.LENGTH_SHORT).show();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+        }
+
+        if (audioHelper != null) {
+            if (audioHelper.recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
+                audioHelper.stopAudioClassification();
+            }
+            audioHelper.stopAudioClassification();
+
+
+            audioHelper.initClassifier();
+        }
+//        Toast.makeText(this, "called onResume", Toast.LENGTH_SHORT).show();
+    }
 
 
     @Override

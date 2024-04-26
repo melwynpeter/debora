@@ -18,11 +18,15 @@ import android.widget.Toast;
 
 import com.mel.debora_v11.databinding.ActivityAudioBinding;
 import com.mel.debora_v11.utilities.Assistant;
+import com.mel.debora_v11.utilities.OnTimerTickListener;
 import com.mel.debora_v11.utilities.TextToSpeech;
+import com.mel.debora_v11.utilities.Timer;
 
+import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class AudioActivity extends AppCompatActivity {
+public class AudioActivity extends AppCompatActivity implements OnTimerTickListener {
 
     private ActivityAudioBinding binding;
 
@@ -38,6 +42,12 @@ public class AudioActivity extends AppCompatActivity {
     private boolean needOneMoreSpeech = false;
 
     private String TAG = "deb11*";
+
+    private float rms;
+    private ArrayList<Float> rmsArr;
+
+    private Timer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +76,10 @@ public class AudioActivity extends AppCompatActivity {
 
         // INITIALIZE TEXT TO SPEECH
         textToSpeech = new TextToSpeech();
+
+        rmsArr = new ArrayList<>();
+        timer = new Timer(this);
+        timer.start();
 
         setListeners();
         speechRecognizerResult();
@@ -111,7 +125,9 @@ public class AudioActivity extends AppCompatActivity {
 
             @Override
             public void onRmsChanged(float rmsdB) {
-
+//                Log.d(TAG, "onRmsChanged: " + rmsdB);
+                float rms = rmsdB;
+                sendRms(rms);
             }
 
             @Override
@@ -214,4 +230,19 @@ public class AudioActivity extends AppCompatActivity {
         }
     }
 
+    private void sendRms(float rms){
+        this.rms = rms;
+        if(rms > 0.0f) {
+            rmsArr.add(rms);
+//            Log.d(TAG, "sendRms: ADDEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+        }
+    }
+
+    @Override
+    public void onTimerTick(@NonNull String duration) {
+//        Log.d(TAG, "onTimerTick: " + duration);
+
+
+        binding.waveformView.addAmplitude(rms);
+    }
 }

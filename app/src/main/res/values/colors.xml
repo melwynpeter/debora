@@ -9,4 +9,7 @@
     <color name="accent1">#910A67</color>
     <color name="accent2">#72FFFF</color>
     <color name="accent3">#365470</color>
+
+    <!-- Fully transparent, equivalent to 0x00000000 -->
+    <color name="transparent2">#11111100</color>
 </resources>

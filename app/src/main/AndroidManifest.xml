@@ -20,7 +20,9 @@
             android:exported="false" />
         <activity
             android:name=".activities.AudioActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Translucent"
+            />
         <activity
             android:name=".activities.ChatActivity"
             android:exported="false" />
