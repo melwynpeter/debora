@@ -7,17 +7,29 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.ActivityAudioBinding;
 import com.mel.debora_v11.utilities.Assistant;
+import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.OnTimerTickListener;
 import com.mel.debora_v11.utilities.TextToSpeech;
 import com.mel.debora_v11.utilities.Timer;
@@ -25,6 +37,7 @@ import com.mel.debora_v11.utilities.Timer;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class AudioActivity extends AppCompatActivity implements OnTimerTickListener {
 
@@ -47,6 +60,8 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
     private ArrayList<Float> rmsArr;
 
     private Timer timer;
+
+    private HashMap<String, String> assistantResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +157,7 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
 
             @Override
             public void onError(int error) {
-                if(!needOneMoreSpeech){
+                if(!needOneMoreSpeech && !(assistantResponse != null && assistantResponse.get(Constants.NEEDS_DIALOG).equals("true"))){
                     finish();
                 }
             }
@@ -152,9 +167,22 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
                 ArrayList<String> data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 binding.output.setText(data.get(0));
                 speechRecognizer.stopListening();
+
+                // stop visualizer
+                binding.waveformView.setVisibility(View.INVISIBLE);
+
+
+                // get response
                 String response = sendData(data.get(0));
                 if(needsOneMoreSpeech(response)){
                     recreate();
+                }
+                else if (assistantResponse != null && assistantResponse.get(Constants.NEEDS_DIALOG).equals("true")){
+                    try{
+                        showBottomDialog(AudioActivity.this);
+                    }catch(Exception e){
+                        Log.e(TAG, "onResults: ", e);
+                    }
                 }
                 else{
                     finish();
@@ -214,10 +242,10 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
     private String sendData(String data){
         data = data.toLowerCase();
         Assistant assistant = new Assistant();
-        String response = assistant.getResponse(data, this);
-        Log.d(TAG, "sendData: " + response);
-        textToSpeech.convertTextToSpeech(this, response);
-        return response;
+        assistantResponse = assistant.getResponse(data, this);
+        Log.d(TAG, "sendData: " + assistantResponse);
+        textToSpeech.convertTextToSpeech(this, assistantResponse.get(Constants.RESPONSE));
+        return assistantResponse.get(Constants.RESPONSE);
     }
 
     private boolean needsOneMoreSpeech(String response){
@@ -244,5 +272,31 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
 
 
         binding.waveformView.addAmplitude(rms);
+    }
+
+    private void showBottomText(){
+
+    }
+
+    private void showBottomDialog(Context context){
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottomsheet_layout);
+
+        ImageView closeDialogButton = dialog.findViewById(R.id.closeDialogButton);
+
+        closeDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 }

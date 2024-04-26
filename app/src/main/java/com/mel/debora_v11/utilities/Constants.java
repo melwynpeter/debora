@@ -44,5 +44,10 @@ public class Constants {
     public static final String INTENT_NOT_SURE = "notSure";
 
 
+    // REPONSE
+    public static final String NEEDS_DIALOG = "hasDialog";
+    public static final String RESPONSE = "reponse";
+
+
 
 }

@@ -1,16 +1,20 @@
 package com.mel.debora_v11.utilities;
 
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Assistant {
     private TextGenerationKotlin t = new TextGenerationKotlin();
     private ArrayList<String> intents = new ArrayList<>();
+
+    private HashMap<String, String> responseHasMap;
 
     final String TAG = "deb11";
     public ArrayList<String> getIntents() {
@@ -33,58 +37,60 @@ public class Assistant {
         return intents;
     }
 
-    public String getResponse(String prompt, ViewModelStoreOwner viewModelStoreOwner){
-        String response = "";
+    public HashMap<String, String> getResponse(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        HashMap<String, String> response = new HashMap<>();
+        response.put(Constants.NEEDS_DIALOG, "false");
         String intentPrediction = textClassification(prompt, getIntents(), viewModelStoreOwner);
         Log.d(TAG, "getResponse: " + intentPrediction);
 
         if(intentPrediction.equals(Constants.INTENT_GREETING)){ // GREETING
-            response = getTextResponse(prompt, Constants.INTENT_GREETING, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GREETING, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_GOODBYE)) { // GOODBYE
-            response = getTextResponse(prompt, Constants.INTENT_GOODBYE, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GOODBYE, viewModelStoreOwner));
             System.exit(0);
         } else if (intentPrediction.equals(Constants.INTENT_CREATOR_OF_MODEL)) { // CREATOR_OF_MODEL
-            response = getTextResponse(prompt, Constants.INTENT_CREATOR_OF_MODEL, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_CREATOR_OF_MODEL, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_NAME_OF_MODEL)) { // NAME_OF_MODEL
-            response = getTextResponse(prompt, Constants.INTENT_NAME_OF_MODEL, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_NAME_OF_MODEL, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_GENERATE_TEXT)) { // GENERATE_TEXT
+            response.put(Constants.NEEDS_DIALOG, "true");
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT, viewModelStoreOwner));
             String generatedText = generateText(prompt, viewModelStoreOwner);
-            response = getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT, viewModelStoreOwner);
         } else if (intentPrediction.equals(Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT)) { // GENERATE_TEXT_WITHOUT_SUBJECT
-            response = getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_GENERATE_EMAIL)) { // GENERATE TEXT
-            response = getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT)) {
-            response = getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_ALARM)) {
             String time = extractTime(prompt, viewModelStoreOwner);
             if(time != null) {
                 if (setAlarm(time)) {
                     Log.d(TAG, "getResponse: " + time);
-                    response = getTextResponse(prompt, Constants.INTENT_ALARM, viewModelStoreOwner);
+                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM, viewModelStoreOwner));
                 } else {
-                    response = "sorry, couldn't set an alarm";
+                    response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
                 }
             } else {
-                response = getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner);
+                response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner));
             }
         } else if (intentPrediction.equals(Constants.INTENT_ALARM_WITHOUT_TIME)) {
-            response = getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner));
         }  else if (intentPrediction.equals(Constants.INTENT_TIMER)) {
-            response = getTextResponse(prompt, Constants.INTENT_TIMER, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_TIMER_WITHOUT_TIME)) {
             String time = extractTime(prompt, viewModelStoreOwner);
             if(setTimer(time)){
-                response = getTextResponse(prompt, Constants.INTENT_TIMER_WITHOUT_TIME, viewModelStoreOwner);
+                response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER_WITHOUT_TIME, viewModelStoreOwner));
             }else{
-                response = "sorry, couldn't set a timer";
+                response.put(Constants.RESPONSE, "sorry, couldn't set a timer");
             }
         } else if (intentPrediction.equals(Constants.INTENT_YOUTUBE)) {
-            response = getTextResponse(prompt, Constants.INTENT_YOUTUBE, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_YOUTUBE, viewModelStoreOwner));
         } else if (intentPrediction.equals(Constants.INTENT_WHATSAPP)) {
-            response = getTextResponse(prompt, Constants.INTENT_WHATSAPP, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_WHATSAPP, viewModelStoreOwner));
         } else{
-            response = "Sorry couldn't discern what you're trying to say";
+            response.put(Constants.RESPONSE, "Sorry couldn't discern what you're trying to say");
         }
         return response;
     }
@@ -195,7 +201,6 @@ public class Assistant {
             return null;
         }
     }
-
 }
 
 
