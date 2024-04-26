@@ -4,7 +4,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,24 +13,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mel.debora_v11.R;
 import com.mel.debora_v11.adapters.ChatAdapter;
 import com.mel.debora_v11.databinding.ActivityChatBinding;
-import com.mel.debora_v11.databinding.FragmentChatBinding;
 import com.mel.debora_v11.models.ChatMessage;
-import com.mel.debora_v11.models.History;
-import com.mel.debora_v11.models.TextGenerationKotlin;
+import com.mel.debora_v11.utilities.TextGenerationKotlin;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
 import com.mel.debora_v11.utilities.TextToSpeech;
-
-import org.checkerframework.checker.units.qual.C;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

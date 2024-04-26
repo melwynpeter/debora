@@ -4,13 +4,9 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.mel.debora_v11.models.TextGenerationKotlin;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Assistant {
     private TextGenerationKotlin t = new TextGenerationKotlin();
@@ -24,14 +20,16 @@ public class Assistant {
         intents.add(Constants.INTENT_NAME_OF_MODEL);
         intents.add(Constants.INTENT_GENERATE_EMAIL);
         intents.add(Constants.INTENT_GENERATE_TEXT);
+        intents.add(Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT);
         intents.add(Constants.INTENT_ALARM);
-        intents.add(Constants.INTENT_ALARM_WITH_TIME);
-        intents.add(Constants.INTENT_ALARM_WITH_TIME_AND_DATE);
+        //intents.add(Constants.INTENT_ALARM_WITH_TIME);
+        //intents.add(Constants.INTENT_ALARM_WITH_TIME_AND_DATE);
         intents.add(Constants.INTENT_TIMER);
-        intents.add(Constants.INTENT_TIMER_WITH_TIME);
+        intents.add(Constants.INTENT_TIMER_WITHOUT_TIME);
         intents.add(Constants.INTENT_YOUTUBE);
         intents.add(Constants.INTENT_GENERAQA);
         intents.add(Constants.INTENT_INVALID_ACTION);
+        intents.add(Constants.INTENT_NOT_SURE);
         return intents;
     }
 
@@ -40,54 +38,61 @@ public class Assistant {
         String intentPrediction = textClassification(prompt, getIntents(), viewModelStoreOwner);
         Log.d(TAG, "getResponse: " + intentPrediction);
 
-
+        if(intentPrediction.equals(Constants.INTENT_GREETING)){ // GREETING
+            response = getTextResponse(prompt, Constants.INTENT_GREETING, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_GOODBYE)) { // GOODBYE
+            response = getTextResponse(prompt, Constants.INTENT_GOODBYE, viewModelStoreOwner);
+            System.exit(0);
+        } else if (intentPrediction.equals(Constants.INTENT_CREATOR_OF_MODEL)) { // CREATOR_OF_MODEL
+            response = getTextResponse(prompt, Constants.INTENT_CREATOR_OF_MODEL, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_NAME_OF_MODEL)) { // NAME_OF_MODEL
+            response = getTextResponse(prompt, Constants.INTENT_NAME_OF_MODEL, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_GENERATE_TEXT)) { // GENERATE_TEXT
+            String generatedText = generateText(prompt, viewModelStoreOwner);
+            response = getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT)) { // GENERATE_TEXT_WITHOUT_SUBJECT
+            response = getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_GENERATE_EMAIL)) { // GENERATE TEXT
+            response = getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT)) {
+            response = getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_ALARM)) {
+            String time = extractTime(prompt, viewModelStoreOwner);
+            if(time != null) {
+                if (setAlarm(time)) {
+                    Log.d(TAG, "getResponse: " + time);
+                    response = getTextResponse(prompt, Constants.INTENT_ALARM, viewModelStoreOwner);
+                } else {
+                    response = "sorry, couldn't set an alarm";
+                }
+            } else {
+                response = getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner);
+            }
+        } else if (intentPrediction.equals(Constants.INTENT_ALARM_WITHOUT_TIME)) {
+            response = getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner);
+        }  else if (intentPrediction.equals(Constants.INTENT_TIMER)) {
+            response = getTextResponse(prompt, Constants.INTENT_TIMER, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_TIMER_WITHOUT_TIME)) {
+            String time = extractTime(prompt, viewModelStoreOwner);
+            if(setTimer(time)){
+                response = getTextResponse(prompt, Constants.INTENT_TIMER_WITHOUT_TIME, viewModelStoreOwner);
+            }else{
+                response = "sorry, couldn't set a timer";
+            }
+        } else if (intentPrediction.equals(Constants.INTENT_YOUTUBE)) {
+            response = getTextResponse(prompt, Constants.INTENT_YOUTUBE, viewModelStoreOwner);
+        } else if (intentPrediction.equals(Constants.INTENT_WHATSAPP)) {
+            response = getTextResponse(prompt, Constants.INTENT_WHATSAPP, viewModelStoreOwner);
+        } else{
+            response = "Sorry couldn't discern what you're trying to say";
+        }
         return response;
     }
 
-    private String getIntent(String speechCommand, ViewModelStoreOwner viewModelStoreOwner){
-        String intent = "";
-
-
-
-        //This first removes all non-letter characters, folds to lowercase, then splits the input, doing all the work in a single line
-//        String[] words = instring.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
-//        s = s.replace("[^a-zA-Z ]", "").toLowerCase();
-//        if(greetingPatterns.contains(s)){
-//            intent = Constants.INTENT_GREETING;
-//        } else if (goodbyePatterns.contains(s)) {
-//            intent = Constants.INTENT_GOODBYE;
-//        } else if (creatorPatterns.contains(s)) {
-//            intent = Constants.INTENT_CREATOR;
-//        } else if (namePatterns.contains(s)) {
-//            intent = Constants.INTENT_NAME;
-//        }else if (generateTextPatterns.contains(s)) {
-//            intent = Constants.INTENT_GENERATE_TEXT;
-//        }else if (doesStartsWithCollection(s, cleanedGenerateTextWithSubjectPatterns)) {
-//            intent = Constants.INTENT_GENERATE_TEXT_WITH_SUBJECT;
-//            subject = extractSubject(s, cleanedGenerateTextWithSubjectPatterns);
-//        }else if (generateEmailPatterns.contains(s)) {
-//            intent = Constants.INTENT_GENERATE_EMAIL;
-//        }else if (doesStartsWithCollection(s, cleanedGenerateEmailWithSubjectPattern)) {
-//            intent = Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT;
-//            subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
-//        }else if (setAlarmPatterns.contains(s)) {
-//            intent = Constants.INTENT_ALARM;
-//        }else if (doesStartsWithCollection(s, cleanedSetAlarmWithTimePatterns)) {
-//            intent = Constants.INTENT_ALARM_WITH_TIME;
-//            subject = extractSubject(s, cleanedSetAlarmWithTimePatterns);
-//        }else if (doesStartsWithCollection(s, cleanedSetAlarmWithTimeAndDatePatterns)) {
-//            intent = Constants.INTENT_ALARM_WITH_TIME_AND_DATE;
-//            subject = extractSubject(s, cleanedSetAlarmWithTimeAndDatePatterns);
-//
-//        }else if (doesStartsWithCollection(s, cleanedGenerateEmailWithSubjectPattern)) {
-//            intent = Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT;
-//            subject = extractSubject(s, cleanedGenerateEmailWithSubjectPattern);
-//        }
-        return intent;
-    }
-
-    private void doTask(){
-
+    private void doTask(String intent, String prompt){
+        if(intent.equals(Constants.INTENT_GENERATE_TEXT)){
+            generateText(prompt, null);
+        }
     }
 
 
@@ -106,6 +111,89 @@ public class Assistant {
             throw new RuntimeException(e);
         }
         return response;
+    }
+
+
+    // TODO: tasks
+    // TASKS
+
+    // GREETING
+    private String getTextResponse(String prompt, String intent, ViewModelStoreOwner viewModelStoreOwner) {
+        String response = "";
+        Responses responses = new Responses();
+        ArrayList<String> intentResponses = responses.getResponses(intent);
+        response = select(prompt, intentResponses,  viewModelStoreOwner);
+        return response;
+    }
+
+    // GENERATE TEXT
+    private String generateText(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        String response = "";
+        CompletableFuture<String> generatedText = t.generateTextTaskAsync(prompt, viewModelStoreOwner);
+        try {
+            response = generatedText.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
+    }
+
+    // SET ALARM
+    private boolean setAlarm(String time){
+        boolean success = true;
+        return success;
+    }
+
+    // SET TIMER
+    private boolean setTimer(String time){
+        boolean success = false;
+        return success;
+    }
+
+    // OPEN YOUTUBE
+    private boolean openYoutube(){
+        boolean success = false;
+        return success;
+    }
+
+
+
+
+
+    // UTILITIES
+    private String select(String prompt, ArrayList<String> intentResponses, ViewModelStoreOwner viewModelStoreOwner){
+        String response;
+        CompletableFuture<String> generatedText = t.selectResponseAsync(prompt, intentResponses, viewModelStoreOwner);
+        try {
+            response = generatedText.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return response;
+    }
+
+    private String extractTime(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        String time = "";
+        CompletableFuture<String> extractedTime = t.extractTimeAsync(prompt, viewModelStoreOwner);
+        try {
+            time = extractedTime.get();
+            Log.d(TAG, "extractTime: " + time);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d(TAG, "extractTime: " + time);
+
+        if(!time.equals("null")){
+            return time;
+        }else{
+            return null;
+        }
     }
 
 }

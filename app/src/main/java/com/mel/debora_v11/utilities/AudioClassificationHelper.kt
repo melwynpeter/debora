@@ -101,7 +101,9 @@ class AudioClassificationHelper(
             return
         }
 
+//        ByteBuffer audioBuffer
         recorder.startRecording()
+//        recorder.read(ByteBuffer audioBuffer, int sizeInBytes)
         executor = ScheduledThreadPoolExecutor(1)
 
         // Each model will expect a specific audio recording length. This formula calculates that

@@ -9,20 +9,15 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.view.View;
+import android.util.Log;
 import android.widget.Toast;
-import android.window.OnBackInvokedDispatcher;
 
-import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.ActivityAudioBinding;
-import com.mel.debora_v11.databinding.ActivityMainBinding;
 import com.mel.debora_v11.utilities.Assistant;
-import com.mel.debora_v11.utilities.AssistantHelper;
 import com.mel.debora_v11.utilities.TextToSpeech;
 
 import java.util.ArrayList;
@@ -41,6 +36,8 @@ public class AudioActivity extends AppCompatActivity {
     TextToSpeech textToSpeech;
 
     private boolean needOneMoreSpeech = false;
+
+    private String TAG = "deb11*";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,7 +199,8 @@ public class AudioActivity extends AppCompatActivity {
         data = data.toLowerCase();
         Assistant assistant = new Assistant();
         String response = assistant.getResponse(data, this);
-//        textToSpeech.convertTextToSpeech(this, response);
+        Log.d(TAG, "sendData: " + response);
+        textToSpeech.convertTextToSpeech(this, response);
         return response;
     }
 
