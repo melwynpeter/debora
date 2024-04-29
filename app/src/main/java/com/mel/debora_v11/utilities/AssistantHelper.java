@@ -8,10 +8,18 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.mel.debora_v11.api.Id;
+import com.mel.debora_v11.api.Item;
+import com.mel.debora_v11.api.YoutubeDataModel;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AssistantHelper {
     private TextGenerationKotlin t = new TextGenerationKotlin();
@@ -223,14 +231,15 @@ public class AssistantHelper {
     // OPEN YOUTUBE
     private boolean openYoutube(Context context, String id){
         boolean success = false;
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + id));
-        try {
-            context.startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            context.startActivity(webIntent);
-        }
+        callApi();
+//        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+//        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+//                Uri.parse("http://www.youtube.com/watch?v=" + id));
+//        try {
+//            context.startActivity(appIntent);
+//        } catch (ActivityNotFoundException ex) {
+//            context.startActivity(webIntent);
+//        }
         return success;
     }
 
@@ -271,6 +280,54 @@ public class AssistantHelper {
             return null;
         }
     }
+
+
+    // youtube api
+    private void callApi(){
+        Call<YoutubeDataModel> YoutubeDataCall = ApiController.getInstance()
+                .getApi()
+                .getYoutubeSearch(
+                        "AIzaSyCdoNFF2vjxZOj7CDt6WhkOLMsSluIsCss",
+                        "relevance",
+                        "great are you lord by micheal smith",
+                        "snippet",
+                        "video"
+                );
+
+        YoutubeDataCall.enqueue(new Callback<YoutubeDataModel>() {
+            @Override
+            public void onResponse(Call<YoutubeDataModel> call, Response<YoutubeDataModel> response) {
+                Log.d(TAG, "onResponse: " + response.body());
+                Log.d(TAG, "onResponse: " + response.body().getItems());
+                Log.d(TAG, "onResponse: " + response.code());
+                Log.d(TAG, "onResponse: " + response.body().getItems());
+
+                Item[] items = response.body().getItems();
+                Log.d(TAG, "onResponse: " + items[0].getId());
+                Id id = items[0].getId();
+                Log.d(TAG, "onResponse: " + id.videoId);
+
+                openYoutubeVideoWithId(id.videoId);
+
+            }
+
+            @Override
+            public void onFailure(Call<YoutubeDataModel> call, Throwable t) {
+
+            }
+        });
+    }
+    private void openYoutubeVideoWithId(String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
+    }
+
 }
 
 
