@@ -39,7 +39,7 @@ import com.mel.debora_v11.utilities.AudioClassificationHelper
 import com.mel.debora_v11.utilities.AudioClassificationListener
 import com.mel.debora_v11.utilities.Constants
 import com.mel.debora_v11.utilities.PreferenceManager
-import com.mel.debora_v11.utilities.TextToSpeech
+import com.mel.debora_v11.utilities.mTextToSpeech
 import org.tensorflow.lite.support.label.Category
 
 class MainActivity2 : AppCompatActivity() {
@@ -49,7 +49,7 @@ class MainActivity2 : AppCompatActivity() {
     private lateinit var preferenceManager: PreferenceManager
 
 
-    private lateinit var textToSpeech: TextToSpeech
+    private lateinit var textToSpeech: mTextToSpeech
 
     private lateinit var audioHelper: AudioClassificationHelper
 
@@ -60,7 +60,7 @@ class MainActivity2 : AppCompatActivity() {
             runOnUiThread {
                 if (results.isNotEmpty() && results[0].label == "debora" && results[0].score > 0.980000) {
                     audioHelper.stopAudioClassification()
-                    startActivity(Intent(applicationContext,  AudioActivity::class.java))
+                    startActivity(Intent(applicationContext,  AssistantActivity::class.java))
                 }
             }
         }
@@ -78,7 +78,7 @@ class MainActivity2 : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         preferenceManager = PreferenceManager(applicationContext)
-        textToSpeech = TextToSpeech()
+        textToSpeech = mTextToSpeech()
 //        getTokenAndLoadUserData();
         //        getTokenAndLoadUserData();
         getToken()

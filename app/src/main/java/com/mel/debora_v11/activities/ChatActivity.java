@@ -24,7 +24,7 @@ import com.mel.debora_v11.models.ChatMessage;
 import com.mel.debora_v11.utilities.TextGenerationKotlin;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
-import com.mel.debora_v11.utilities.TextToSpeech;
+import com.mel.debora_v11.utilities.mTextToSpeech;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private ActivityChatBinding binding;
 
-    private TextToSpeech textToSpeech;
+    private mTextToSpeech textToSpeech;
 
     private String savePrompt;
 
@@ -60,7 +60,7 @@ public class ChatActivity extends AppCompatActivity {
 
         binding = ActivityChatBinding.inflate(getLayoutInflater());
 
-        textToSpeech = new TextToSpeech();
+        textToSpeech = new mTextToSpeech();
         init();
         listenMessages(preferenceManager.getString(Constants.KEY_CONVERSATION_ID));
         setListeners();

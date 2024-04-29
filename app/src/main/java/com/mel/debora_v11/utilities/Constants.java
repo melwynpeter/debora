@@ -47,6 +47,7 @@ public class Constants {
     // REPONSE
     public static final String NEEDS_DIALOG = "hasDialog";
     public static final String RESPONSE = "reponse";
+    public static final String RESPONSE_INTENT = "reponseIntent";
 
 
 

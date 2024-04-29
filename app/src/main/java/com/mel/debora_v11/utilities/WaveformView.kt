@@ -38,7 +38,7 @@ class WaveformView(context: Context?, attrs: AttributeSet?) : View(context, attr
 //        var norm = Math.min(amp.toInt()/7, 400).toFloat()
         var norm = amp * 10
         amplitudes.add(norm)
-        Log.d(TAG, "addAmplitude: $amp")
+//        Log.d(TAG, "addAmplitude: $amp")
 
         spikes.clear()
         var amps = amplitudes.takeLast(maxSpikes)

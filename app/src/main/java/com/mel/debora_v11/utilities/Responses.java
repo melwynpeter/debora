@@ -144,6 +144,14 @@ public class Responses {
             openWhatsappResponses.add("sure, opening whatsapp");
             openWhatsappResponses.add("opening whatsapp");
             return openWhatsappResponses;
+        }else if (intent.equals(Constants.INTENT_GENERAQA)) {
+            // GENERAL QA
+            ArrayList<String> generalQAResponses = new ArrayList<>();
+            generalQAResponses.add("sure, here is some information about ");
+            generalQAResponses.add("here is some information about");
+            generalQAResponses.add("information about");
+            generalQAResponses.add("sure");
+            return generalQAResponses;
         }
 
 

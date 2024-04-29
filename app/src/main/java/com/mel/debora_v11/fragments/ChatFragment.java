@@ -20,7 +20,7 @@ import com.mel.debora_v11.models.ChatMessage;
 import com.mel.debora_v11.utilities.TextGenerationKotlin;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
-import com.mel.debora_v11.utilities.TextToSpeech;
+import com.mel.debora_v11.utilities.mTextToSpeech;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class ChatFragment extends Fragment {
 
     private FragmentChatBinding binding;
 
-    private TextToSpeech textToSpeech;
+    private mTextToSpeech textToSpeech;
 
     private String savePrompt;
 
@@ -54,7 +54,7 @@ public class ChatFragment extends Fragment {
 //        return inflater.inflate(R.layout.fragment_chat, container, false);
         binding = FragmentChatBinding.inflate(getLayoutInflater());
 
-        textToSpeech = new TextToSpeech();
+        textToSpeech = new mTextToSpeech();
         init();
         listenMessages();
         setListeners();

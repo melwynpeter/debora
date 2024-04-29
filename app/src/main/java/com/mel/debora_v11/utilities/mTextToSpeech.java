@@ -1,17 +1,14 @@
 package com.mel.debora_v11.utilities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.UtteranceProgressListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mel.debora_v11.activities.AudioActivity;
-
 import java.util.Locale;
 
-public class TextToSpeech {
+public class mTextToSpeech {
     private Context context;
     private android.speech.tts.TextToSpeech t1;
 
@@ -19,8 +16,11 @@ public class TextToSpeech {
 
     private AppCompatActivity activity;
 
-    public TextToSpeech(){}
-    public TextToSpeech(AppCompatActivity activity){
+    private boolean isUtteranceStart = false;
+    private boolean isUtteranceDone = true;
+
+    public mTextToSpeech(){}
+    public mTextToSpeech(AppCompatActivity activity){
         this.activity = activity;
     }
 
@@ -41,17 +41,14 @@ public class TextToSpeech {
                 t1.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                     @Override
                     public void onStart(String utteranceId) {
-
+                        isUtteranceStart = true;
+                        isUtteranceDone = false;
                     }
 
                     @Override
                     public void onDone(String utteranceId) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                            }
-                        });
+                        isUtteranceStart = false;
+                        isUtteranceDone = true;
                     }
 
                     @Override
@@ -70,6 +67,22 @@ public class TextToSpeech {
 
     public boolean isUtterance(){
         if(t1 != null){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public boolean isUtteranceStart(){
+        if(isUtteranceStart){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public boolean isUtteranceDone(){
+        if(isUtteranceDone){
             return true;
         }
         else {

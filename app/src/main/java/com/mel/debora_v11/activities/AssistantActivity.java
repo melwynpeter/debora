@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -22,24 +23,24 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mel.debora_v11.R;
 import com.mel.debora_v11.databinding.ActivityAudioBinding;
-import com.mel.debora_v11.utilities.Assistant;
+import com.mel.debora_v11.utilities.AssistantHelper;
+import com.mel.debora_v11.utilities.AudioClassificationHelper;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.OnTimerTickListener;
-import com.mel.debora_v11.utilities.TextToSpeech;
+import com.mel.debora_v11.utilities.mTextToSpeech;
 import com.mel.debora_v11.utilities.Timer;
 
-import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
-public class AudioActivity extends AppCompatActivity implements OnTimerTickListener {
+public class AssistantActivity extends AppCompatActivity implements OnTimerTickListener {
 
     private ActivityAudioBinding binding;
 
@@ -50,7 +51,8 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
     private Intent speechRecognizerIntent;
 
     private int count = 0;
-    TextToSpeech textToSpeech;
+    mTextToSpeech textToSpeech;
+    mTextToSpeech tts;
 
     private boolean needOneMoreSpeech = false;
 
@@ -62,6 +64,10 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
     private Timer timer;
 
     private HashMap<String, String> assistantResponse;
+
+    private CompletableFuture<String> future;
+
+    private AudioClassificationHelper audioHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +96,8 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
 
 
         // INITIALIZE TEXT TO SPEECH
-        textToSpeech = new TextToSpeech();
+        textToSpeech = new mTextToSpeech();
+        tts = new mTextToSpeech();
 
         rmsArr = new ArrayList<>();
         timer = new Timer(this);
@@ -153,6 +160,8 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
             @Override
             public void onEndOfSpeech() {
 //                finish();
+                // stop visualizer
+                binding.waveformView.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -168,25 +177,11 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
                 binding.output.setText(data.get(0));
                 speechRecognizer.stopListening();
 
-                // stop visualizer
-                binding.waveformView.setVisibility(View.INVISIBLE);
-
+                // prompt
+                String prompt = data.get(0);
 
                 // get response
-                String response = sendData(data.get(0));
-                if(needsOneMoreSpeech(response)){
-                    recreate();
-                }
-                else if (assistantResponse != null && assistantResponse.get(Constants.NEEDS_DIALOG).equals("true")){
-                    try{
-                        showBottomDialog(AudioActivity.this);
-                    }catch(Exception e){
-                        Log.e(TAG, "onResults: ", e);
-                    }
-                }
-                else{
-                    finish();
-                }
+                String response = sendData(prompt);
             }
 
             @Override
@@ -239,13 +234,81 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
 
     }
 
-    private String sendData(String data){
-        data = data.toLowerCase();
-        Assistant assistant = new Assistant();
-        assistantResponse = assistant.getResponse(data, this);
-        Log.d(TAG, "sendData: " + assistantResponse);
-        textToSpeech.convertTextToSpeech(this, assistantResponse.get(Constants.RESPONSE));
+    private String sendData(String prompt){
+        prompt = prompt.toLowerCase();
+        AssistantHelper assistantHelper = new AssistantHelper();
+        assistantResponse = assistantHelper.getResponse(prompt, this);
+
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            Log.d(TAG, "sendData: run async start");
+
+            Log.d(TAG, "sendData: " + assistantResponse);
+            textToSpeech.convertTextToSpeech(AssistantActivity.this, assistantResponse.get(Constants.RESPONSE));
+            Log.d(TAG, "sendData: run async end");
+
+        });
+        String response = assistantResponse.get(Constants.RESPONSE);
+        String needsDialog = assistantResponse.get(Constants.NEEDS_DIALOG);
+
+        String finalPrompt = prompt;
+        future.thenAccept((result) -> {
+            Log.d(TAG, "sendData: thenAccept start");
+            if(response != null && needsOneMoreSpeech(response)){
+                recreate();
+            }
+            else if (assistantResponse != null && needsDialog != null && needsDialog.equals("true")){
+//                String taskString = getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+//                showBottomDialog(AssistantActivity.this, taskString);
+
+                    CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+                        String taskString = getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+                        return taskString;
+                    });
+                    future1.thenAccept(result1 -> {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showBottomDialog(AssistantActivity.this, result1, assistantResponse.get(Constants.RESPONSE_INTENT));
+                            }
+                        });
+                    });
+                    future1.join();
+            }
+            else if (assistantResponse != null && needsDialog != null && needsDialog.equals("false")){
+
+                getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+                finish();
+
+//                String taskString = getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+//                showBottomDialog(AssistantActivity.this, taskString);
+
+//                    CompletableFuture<Void> future1 = CompletableFuture.supplyAsync(() -> {
+//                        String taskString = getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+//                    });
+//                    future1.thenAccept(result1 -> {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                showBottomDialog(AssistantActivity.this, result1, assistantResponse.get(Constants.RESPONSE_INTENT));
+//                            }
+//                        });
+//                    });
+//                    future1.join();
+            }
+            else{
+                finish();
+            }
+            Log.d(TAG, "sendData: thenAccept end");
+
+        });
+
+        future.join();
+        Log.d(TAG, "sendData: sendData end");
         return assistantResponse.get(Constants.RESPONSE);
+    }
+    private String getTask(String intent, String prompt){
+        AssistantHelper assistantHelper = new AssistantHelper(this);
+        return assistantHelper.doTask(intent, prompt, this);
     }
 
     private boolean needsOneMoreSpeech(String response){
@@ -278,7 +341,7 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
 
     }
 
-    private void showBottomDialog(Context context){
+    private void showBottomDialog(Context context, String taskString, String intent){
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheet_layout);
@@ -289,6 +352,28 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                if(tts.isUtterance()){
+                    tts.stopUtterance();
+                }
+                finish();
+            }
+        });
+
+        TextView textView = dialog.findViewById(R.id.taskText);
+        // set text
+        if(taskString != ""){
+            if(intent == Constants.INTENT_GENERAQA){
+                tts.convertTextToSpeech(this, taskString);
+            }
+            textView.setText(taskString);
+        }
+
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                if(tts.isUtterance()){
+                    tts.stopUtterance();
+                }
                 finish();
             }
         });
@@ -299,4 +384,10 @@ public class AudioActivity extends AppCompatActivity implements OnTimerTickListe
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
     }
+
+
+    private void tts(String response){
+        textToSpeech.convertTextToSpeech(this, response);
+    }
+
 }

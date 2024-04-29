@@ -35,13 +35,12 @@ import com.mel.debora_v11.utilities.AudioClassificationHelper;
 import com.mel.debora_v11.utilities.AudioClassificationListener;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
-import com.mel.debora_v11.utilities.TextToSpeech;
+import com.mel.debora_v11.utilities.mTextToSpeech;
 
 import org.tensorflow.lite.support.label.Category;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
 
 
-    private TextToSpeech textToSpeech;
+    private mTextToSpeech textToSpeech;
 
     private AudioClassificationHelper audioHelper;
     private int RECORD_AUDIO_REQUEST_CODE = 100;
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!results.isEmpty() && results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.950000) {
                         audioHelper.stopAudioClassification();
                         Toast.makeText(MainActivity.this, results.get(0).getScore() + "", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(MainActivity.this, AudioActivity.class));
+                        startActivity(new Intent(MainActivity.this, AssistantActivity.class));
                     }
                 }
             });
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
-        textToSpeech = new TextToSpeech();
+        textToSpeech = new mTextToSpeech();
 //        getTokenAndLoadUserData();
         getToken();
         setListeners();

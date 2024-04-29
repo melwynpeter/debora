@@ -19,7 +19,7 @@
             android:name=".fragments.accountMenu.AboutActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.AudioActivity"
+            android:name=".activities.AssistantActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Translucent"
             />

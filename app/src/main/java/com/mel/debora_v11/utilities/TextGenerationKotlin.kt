@@ -126,6 +126,20 @@ class TextGenerationKotlin {
         print(response.text)
         return fullResponse
     }
+    suspend fun generalQATask(prompt: String, owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+
+        val generalQATaskPrompt = prompt + " : in about 50 words, only return information."
+        val response = generativeModel.generateContent(generalQATaskPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        return fullResponse
+    }
 
     suspend fun selectResponse(prompt: String, responses: ArrayList<String>, owner: ViewModelStoreOwner): String{
         val generativeModel = GenerativeModel(
@@ -171,6 +185,7 @@ class TextGenerationKotlin {
     fun generateConversationNameAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateConversationName(prompt, owner) }
     fun textClassificationAsync(prompt: String, intents: ArrayList<String>, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { textClassification(prompt, intents, owner) }
     fun generateTextTaskAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generateTextTask(prompt, owner) }
+    fun generalQATaskAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generalQATask(prompt, owner) }
     fun selectResponseAsync(prompt: String, responses: ArrayList<String>, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { selectResponse(prompt, responses, owner) }
     fun extractTimeAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractTime(prompt, owner) }
 
