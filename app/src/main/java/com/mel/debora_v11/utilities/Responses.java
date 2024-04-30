@@ -107,13 +107,6 @@ public class Responses {
             setAlarmWithoutTimeResponses.add("specify a time");
             setAlarmWithoutTimeResponses.add("specify a time to set an alarm");
             return setAlarmWithoutTimeResponses;
-        }else if (intent.equals(Constants.INTENT_ALARM_WITH_TIME_AND_DATE)) {
-            // SET AN ALARM WITH TIME
-            ArrayList<String> setAlarmWithTimeAndDateResponses = new ArrayList<>();
-            setAlarmWithTimeAndDateResponses.add("sure... alarm set for");
-            setAlarmWithTimeAndDateResponses.add("sure, right away... set an alarm for");
-            setAlarmWithTimeAndDateResponses.add("set an alarm for");
-            return setAlarmWithTimeAndDateResponses;
         }else if (intent.equals(Constants.INTENT_TIMER)) {
             // TIMER
             // SET A TIMER
@@ -130,13 +123,22 @@ public class Responses {
             setTimerWithoutTimerResponses.add("specify a time");
             setTimerWithoutTimerResponses.add("specify a time to set a timer");
             return setTimerWithoutTimerResponses;
-        }else if (intent.equals(Constants.INTENT_YOUTUBE)) {
+        }else if (intent.equals(Constants.INTENT_OPEN_YOUTUBE)) {
             // EXTERNAL APPS
             // OPEN YOUTUBE
             ArrayList<String> openYoutubeResponses = new ArrayList<>();
             openYoutubeResponses.add("sure, opening youtube");
             openYoutubeResponses.add("opening youtube");
             return openYoutubeResponses;
+        }else if (intent.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)) {
+            // EXTERNAL APPS
+            // OPEN YOUTUBE AND PLAY
+            ArrayList<String> openYoutubeAndPlayResponses = new ArrayList<>();
+            openYoutubeAndPlayResponses.add("sure, playing {videoQuery} on Youtube");
+            openYoutubeAndPlayResponses.add("playing {videoQuery} on Youtube");
+            openYoutubeAndPlayResponses.add("opening youtube, and playing {videoQuery}");
+            openYoutubeAndPlayResponses.add("opening youtube, and playing videos about {videoQuery}");
+            return openYoutubeAndPlayResponses;
         }else if (intent.equals(Constants.INTENT_WHATSAPP)) {
             // EXTERNAL APPS
             // OPEN WHATSAPP

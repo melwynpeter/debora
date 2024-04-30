@@ -177,6 +177,21 @@ class TextGenerationKotlin {
         Log.d(TAG, "extractTime: " + response.text)
         return fullResponse
     }
+    suspend fun extractYoutubeVideoQuery(prompt: String, owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+
+        val youtubeVideoQueryPrompt = "extract Youtube video query from {$prompt}, return only query"
+        val response = generativeModel.generateContent(youtubeVideoQueryPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        Log.d(TAG, "extractYoutubeVideoQuery: " + response.text)
+        return fullResponse
+    }
 
 
 
@@ -188,6 +203,7 @@ class TextGenerationKotlin {
     fun generalQATaskAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generalQATask(prompt, owner) }
     fun selectResponseAsync(prompt: String, responses: ArrayList<String>, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { selectResponse(prompt, responses, owner) }
     fun extractTimeAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractTime(prompt, owner) }
+    fun extractYoutubeVideoQueryAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractYoutubeVideoQuery(prompt, owner) }
 
 
 

@@ -390,7 +390,4 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
         textToSpeech.convertTextToSpeech(this, response);
     }
 
-    // youtube api
-
-
 }

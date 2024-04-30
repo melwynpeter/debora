@@ -34,10 +34,10 @@ public class Constants {
     public static final String INTENT_GENERATE_EMAIL_WITH_SUBJECT = "generateEmailWithSubject";
     public static final String INTENT_ALARM = "alarm";
     public static final String INTENT_ALARM_WITHOUT_TIME = "alarmWithoutTime";
-    public static final String INTENT_ALARM_WITH_TIME_AND_DATE = "alarmWithTimeAndDate";
     public static final String INTENT_TIMER = "timer";
     public static final String INTENT_TIMER_WITHOUT_TIME = "timerWithoutTime";
-    public static final String INTENT_YOUTUBE = "youtube";
+    public static final String INTENT_OPEN_YOUTUBE = "openYoutube";
+    public static final String INTENT_OPEN_YOUTUBE_AND_PLAY = "openYoutubeAndPlay";
     public static final String INTENT_WHATSAPP = "whatsapp";
     public static final String INTENT_GENERAQA = "generalQA";
     public static final String INTENT_INVALID_ACTION = "invalidAction";

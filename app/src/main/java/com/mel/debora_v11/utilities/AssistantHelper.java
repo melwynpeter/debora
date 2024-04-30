@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 
 import androidx.lifecycle.ViewModelStoreOwner;
 
@@ -44,11 +45,11 @@ public class AssistantHelper {
         intents.add(Constants.INTENT_GENERATE_TEXT);
         intents.add(Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT);
         intents.add(Constants.INTENT_ALARM);
-        //intents.add(Constants.INTENT_ALARM_WITH_TIME);
-        //intents.add(Constants.INTENT_ALARM_WITH_TIME_AND_DATE);
+        intents.add(Constants.INTENT_ALARM_WITHOUT_TIME);
         intents.add(Constants.INTENT_TIMER);
         intents.add(Constants.INTENT_TIMER_WITHOUT_TIME);
-        intents.add(Constants.INTENT_YOUTUBE);
+        intents.add(Constants.INTENT_OPEN_YOUTUBE);
+        intents.add(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY);
         intents.add(Constants.INTENT_GENERAQA);
         intents.add(Constants.INTENT_INVALID_ACTION);
         intents.add(Constants.INTENT_NOT_SURE);
@@ -95,7 +96,7 @@ public class AssistantHelper {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT);
 
-        } else if (intentPrediction.equals(Constants.INTENT_ALARM)) {
+        } else if (intentPrediction.equals(Constants.INTENT_ALARM)) { //SET ALARM
             String time = extractTime(prompt, viewModelStoreOwner);
             if(time != null) {
                 if (setAlarm(time)) {
@@ -126,9 +127,13 @@ public class AssistantHelper {
             }else{
                 response.put(Constants.RESPONSE, "sorry, couldn't set a timer");
             }
-        } else if (intentPrediction.equals(Constants.INTENT_YOUTUBE)) {
-            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_YOUTUBE, viewModelStoreOwner));
-            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_YOUTUBE);
+        } else if (intentPrediction.equals(Constants.INTENT_OPEN_YOUTUBE)) {
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_OPEN_YOUTUBE, viewModelStoreOwner));
+            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_OPEN_YOUTUBE);
+
+        } else if (intentPrediction.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)) {
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY, viewModelStoreOwner));
+            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY);
 
         } else if (intentPrediction.equals(Constants.INTENT_WHATSAPP)) {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_WHATSAPP, viewModelStoreOwner));
@@ -152,8 +157,10 @@ public class AssistantHelper {
         }else if(intent.equals(Constants.INTENT_GENERAQA)){
             String generalQA = generalQA(prompt, viewModelStoreOwner);
             return generalQA;
-        }else if(intent.equals(Constants.INTENT_YOUTUBE)){
-            openYoutube(context, "SEqx4UarLHE");
+        }else if(intent.equals(Constants.INTENT_OPEN_YOUTUBE)){
+            openYoutube();
+        }else if(intent.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)){
+            openYoutubeAndPlay(prompt, viewModelStoreOwner);
         }
         return "";
     }
@@ -229,18 +236,19 @@ public class AssistantHelper {
     }
 
     // OPEN YOUTUBE
-    private boolean openYoutube(Context context, String id){
+    private boolean openYoutube(){
         boolean success = false;
-        callApi();
-//        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-//        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-//                Uri.parse("http://www.youtube.com/watch?v=" + id));
-//        try {
-//            context.startActivity(appIntent);
-//        } catch (ActivityNotFoundException ex) {
-//            context.startActivity(webIntent);
-//        }
+        openYoutubeVideoWithId("");
         return success;
+    }
+
+    // OPEN YOUTUBE AND PLAY
+    private boolean openYoutubeAndPlay(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        boolean success = false;
+        String extractedYoutubeVideoQuery = extractYoutubeVideoQuery(prompt, viewModelStoreOwner);
+        callApi(extractedYoutubeVideoQuery);
+        return success;
+
     }
 
 
@@ -281,15 +289,36 @@ public class AssistantHelper {
         }
     }
 
+    private String extractYoutubeVideoQuery(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        String youtubeVideoQuery = "";
+        CompletableFuture<String> extractedYoutubeVideoQuery = t.extractYoutubeVideoQueryAsync(prompt, viewModelStoreOwner);
+        try {
+            youtubeVideoQuery = extractedYoutubeVideoQuery.get();
+            Log.d(TAG, "extractTime: " + youtubeVideoQuery);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d(TAG, "extractYoutubeQuery: " + youtubeVideoQuery);
+
+        if(!youtubeVideoQuery.equals("null")){
+            return youtubeVideoQuery;
+        }else{
+            return null;
+        }
+    }
+
 
     // youtube api
-    private void callApi(){
+    private void callApi(String query){
+        query = "great are you lord by micheal smith";
         Call<YoutubeDataModel> YoutubeDataCall = ApiController.getInstance()
                 .getApi()
                 .getYoutubeSearch(
                         "AIzaSyCdoNFF2vjxZOj7CDt6WhkOLMsSluIsCss",
                         "relevance",
-                        "great are you lord by micheal smith",
+                        query,
                         "snippet",
                         "video"
                 );
