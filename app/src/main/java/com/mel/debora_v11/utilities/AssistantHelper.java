@@ -320,7 +320,7 @@ public class AssistantHelper {
 
         if(time != ""){
         ReminderController reminderController = new ReminderController(context);
-            if(reminderController.setReminder(time)){
+            if(reminderController.setReminder(time, remind)){
                 success = true;
             }
         }

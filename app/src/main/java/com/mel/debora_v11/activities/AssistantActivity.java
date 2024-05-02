@@ -30,10 +30,12 @@ import android.widget.Toast;
 import com.mel.debora_v11.R;
 import com.mel.debora_v11.activities.subactivities.SpotifyActivity;
 import com.mel.debora_v11.databinding.ActivityAssistantBinding;
+import com.mel.debora_v11.models.Recent;
 import com.mel.debora_v11.utilities.AssistantHelper;
 import com.mel.debora_v11.utilities.AudioClassificationHelper;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.OnTimerTickListener;
+import com.mel.debora_v11.utilities.database.RecentAdder;
 import com.mel.debora_v11.utilities.mTextToSpeech;
 import com.mel.debora_v11.utilities.Timer;
 
@@ -240,11 +242,14 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
         AssistantHelper assistantHelper = new AssistantHelper(this);
         assistantResponse = assistantHelper.getResponse(prompt, this);
 
+        String finalPrompt1 = prompt;
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             Log.d(TAG, "sendData: run async start");
 
             Log.d(TAG, "sendData: " + assistantResponse);
             textToSpeech.convertTextToSpeech(AssistantActivity.this, assistantResponse.get(Constants.RESPONSE));
+            RecentAdder recentAdder = new RecentAdder(AssistantActivity.this);
+            recentAdder.addRecent(finalPrompt1, assistantResponse.get(Constants.RESPONSE_INTENT), assistantResponse.get(Constants.RESPONSE_EXTRA));
             Log.d(TAG, "sendData: run async end");
 
         });

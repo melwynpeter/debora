@@ -62,6 +62,7 @@ public class Constants {
 
     // RECENTS
     public static final String KEY_RECENT_ACTIVITY = "recentActivity";
+    public static final String KEY_RECENT_ACTIVITY_TYPE = "recentActivityType";
     public static final String KEY_RECENT_ACTIVITY_EXTRA = "recentActivityExtra";
     public static final String KEY_COLLECTION_RECENT_ACTIVITY_LIST = "recent_activity_list";
 

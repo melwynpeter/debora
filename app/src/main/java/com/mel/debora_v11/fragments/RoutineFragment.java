@@ -14,6 +14,7 @@ import com.mel.debora_v11.R;
 import com.mel.debora_v11.activities.subactivities.AlarmManagerActivity;
 import com.mel.debora_v11.activities.subactivities.GeneralQAActivity;
 import com.mel.debora_v11.activities.subactivities.GeneratedTextsActivity;
+import com.mel.debora_v11.activities.subactivities.RecentActivity;
 import com.mel.debora_v11.activities.subactivities.ReminderActivity;
 import com.mel.debora_v11.activities.subactivities.TimerManagerActivity;
 import com.mel.debora_v11.activities.subactivities.TodoActivity;
@@ -47,6 +48,7 @@ public class RoutineFragment extends Fragment {
         binding.recents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(getActivity(), RecentActivity.class));
 
             }
         });
@@ -93,11 +95,5 @@ public class RoutineFragment extends Fragment {
             }
         });
 
-        binding.recents.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 }

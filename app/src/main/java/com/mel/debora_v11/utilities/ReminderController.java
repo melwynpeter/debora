@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.mel.debora_v11.utilities.database.GeneralQAAdder;
+import com.mel.debora_v11.utilities.database.ReminderAdder;
+
 import java.util.Calendar;
 
 public class ReminderController {
@@ -42,12 +45,12 @@ public class ReminderController {
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    public boolean setReminder(String alarmTime){
+    public boolean setReminder(String reminderTime, String reminderText){
 //        Calendar targetCal = getCalender(alarmTime);
 //        int time = Integer.parseInt(alarmTime);
 //        long triggerTime = System.currentTimeMillis() + (time * 1000);
 //        long setTriggerTime = targetCal.getTimeInMillis();
-        String timeArray[] = alarmTime.split(":");
+        String timeArray[] = reminderTime.split(":");
         int hourOfDay = Integer.parseInt(timeArray[0]);
         int minute = Integer.parseInt(timeArray[1]);
         int seconds = Integer.parseInt(timeArray[2]);
@@ -68,6 +71,15 @@ public class ReminderController {
         }catch (Exception e){
 
         }
+
+        // Add reminder to db
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ReminderAdder reminderAdder = new ReminderAdder(context);
+                reminderAdder.addReminder(reminderTime, reminderText);
+            }
+        }).start();
         return true;
     }
 }

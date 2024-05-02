@@ -31,9 +31,12 @@ public class RecentAdder {
         this.context = context;
     }
 
-    public boolean addRecent(String recentActivity, String recentActivityExtra){
+    public boolean addRecent(String recentActivity, String recentActivityType, String recentActivityExtra){
         init();
-        addRecentToDatabase(recentActivity, recentActivityExtra);
+        if(recentActivity == null || recentActivityExtra.equals("")){
+            recentActivityExtra = "false";
+        }
+        addRecentToDatabase(recentActivity, recentActivityType, recentActivityExtra);
         if(isSuccess){
             return true;
         }
@@ -44,10 +47,11 @@ public class RecentAdder {
         db = FirebaseFirestore.getInstance();
     }
 
-    private void addRecentToDatabase(String recentActivity, String recentActivityExtra){
+    private void addRecentToDatabase(String recentActivity, String recentActivityType, String recentActivityExtra){
         HashMap<String, Object> message = new HashMap<>();
         message.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECENT_ACTIVITY, recentActivity);
+        message.put(Constants.KEY_RECENT_ACTIVITY_TYPE, recentActivityType);
         message.put(Constants.KEY_RECENT_ACTIVITY_EXTRA, recentActivityExtra);
         message.put(Constants.KEY_TIMESTAMP, new Date());
         db.collection(Constants.KEY_COLLECTION_RECENT_ACTIVITY_LIST).add(message).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
