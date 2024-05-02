@@ -164,6 +164,11 @@ public class Responses {
             makeCallResponses.add("calling {callRecipient} ");
             makeCallResponses.add("sure, calling {callRecipient}");
             return makeCallResponses;
+        }else if (intent.equals(Constants.INTENT_PLAY_MUSIC)) { // MAKE CALL
+            ArrayList<String> makeCallResponses = new ArrayList<>();
+            makeCallResponses.add("calling {callRecipient} ");
+            makeCallResponses.add("sure, calling {callRecipient}");
+            return makeCallResponses;
         }
 
 

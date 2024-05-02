@@ -1,5 +1,6 @@
 package com.mel.debora_v11.adapters;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -17,12 +18,11 @@ import java.util.List;
 
 public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Todo> todos;
-    private final String todoMakerId;
+    private final String userId;
 
-
-    public TodoAdapter(List<Todo> todos, String todoMakerId) {
+    public TodoAdapter(List<Todo> todos, String userId) {
         this.todos = todos;
-        this.todoMakerId = todoMakerId;
+        this.userId = userId;
     }
 
     @NonNull
@@ -62,7 +62,7 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         void setData(Todo todo){
-            binding.textMessage.setText(todo.todo);
+            binding.todo.setText(todo.todo);
             binding.textDateTime.setText(todo.dateTime);
         }
     }

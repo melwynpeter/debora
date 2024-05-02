@@ -2,7 +2,7 @@ package com.mel.debora_v11.models;
 
 import java.util.Date;
 
-public class Todo {
-    public String todoMakerId, todo, todoStatus, dateTime;
+public class Recent {
+    public String userId, activity, activityExtra, dateTime;
     public Date dateObject;
 }

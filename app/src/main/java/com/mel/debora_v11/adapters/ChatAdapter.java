@@ -22,8 +22,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int VIEW_TYPE_RECEIVED = 2;
 
     public ChatAdapter(List<ChatMessage> chatMessages, String senderId) {
-        Log.d("calltest", "ChatAdapter() invoked");
-
         this.chatMessages = chatMessages;
         this.senderId = senderId;
     }

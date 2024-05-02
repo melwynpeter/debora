@@ -46,6 +46,10 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.firebase:firebase-firestore:24.10.1")
     implementation("com.google.firebase:firebase-messaging:23.4.0")
+    implementation(fileTree(mapOf(
+        "dir" to "libs",
+        "include" to listOf("*.aar", "*.jar")
+    )))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -75,5 +79,12 @@ dependencies {
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.1.0")
     implementation("com.squareup.retrofit2:converter-gson:2.1.0")
+
+    // Spotify
+    implementation("com.spotify.android:auth:1.2.5") // Maven dependency
+
+    // All other dependencies for your app should also be here:
+    implementation("androidx.browser:browser:1.8.0")
+
 
 }

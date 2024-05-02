@@ -1,28 +1,23 @@
-package com.mel.debora_v11.utilities;
+package com.mel.debora_v11.utilities.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.mel.debora_v11.adapters.ChatAdapter;
 import com.mel.debora_v11.adapters.TodoAdapter;
-import com.mel.debora_v11.models.ChatMessage;
 import com.mel.debora_v11.models.Todo;
+import com.mel.debora_v11.utilities.Constants;
+import com.mel.debora_v11.utilities.PreferenceManager;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class TodoAdder {
+public class RecentAdder {
     private List<Todo> todos;
     private TodoAdapter todoAdapter;
 
@@ -31,14 +26,14 @@ public class TodoAdder {
     private PreferenceManager preferenceManager;
     private boolean isSuccess = false;
 
-    public TodoAdder(){}
-    public TodoAdder(Context context){
+    public RecentAdder(){}
+    public RecentAdder(Context context){
         this.context = context;
     }
 
-    public boolean addTodo(String todo){
+    public boolean addRecent(String recentActivity, String recentActivityExtra){
         init();
-        addTodoToDatabase(todo);
+        addRecentToDatabase(recentActivity, recentActivityExtra);
         if(isSuccess){
             return true;
         }
@@ -49,12 +44,13 @@ public class TodoAdder {
         db = FirebaseFirestore.getInstance();
     }
 
-    private void addTodoToDatabase(String todo){
+    private void addRecentToDatabase(String recentActivity, String recentActivityExtra){
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_TODO_MAKER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-        message.put(Constants.KEY_TODO, todo);
+        message.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+        message.put(Constants.KEY_RECENT_ACTIVITY, recentActivity);
+        message.put(Constants.KEY_RECENT_ACTIVITY_EXTRA, recentActivityExtra);
         message.put(Constants.KEY_TIMESTAMP, new Date());
-        db.collection(Constants.KEY_COLLECTION_TODO_LIST).add(message).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        db.collection(Constants.KEY_COLLECTION_RECENT_ACTIVITY_LIST).add(message).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 isSuccess(true);

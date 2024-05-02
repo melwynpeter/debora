@@ -6,27 +6,30 @@
     android:layout_height="wrap_content">
 
 
-    <TextView
-        android:id="@+id/textMessage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/sent_message"
-        android:padding="@dimen/_12sdp"
-        android:text="message"
+    <CheckBox
+        android:id="@+id/todo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15px"
+        android:background="@drawable/routine_shape"
+        android:padding="@dimen/_25sdp"
+        android:paddingStart="@dimen/_10sdp"
+        android:text="todo"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="wrap" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textDateTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-
+        android:layout_margin="@dimen/_5sdp"
         android:text="Datetime"
         android:textSize="@dimen/_10ssp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textMessage" />
+        app:layout_constraintBottom_toBottomOf="@+id/todo"
+        app:layout_constraintEnd_toEndOf="@+id/todo"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

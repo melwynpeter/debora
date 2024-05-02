@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mel.debora_v11.R;
+import com.mel.debora_v11.activities.subactivities.SpotifyActivity;
 import com.mel.debora_v11.databinding.ActivityAssistantBinding;
 import com.mel.debora_v11.utilities.AssistantHelper;
 import com.mel.debora_v11.utilities.AudioClassificationHelper;

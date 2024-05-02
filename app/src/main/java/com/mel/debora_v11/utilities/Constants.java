@@ -43,6 +43,7 @@ public class Constants {
     public static final String INTENT_WHATSAPP = "whatsapp";
     public static final String INTENT_GENERAQA = "generalQA";
     public static final String INTENT_PHONE_CALL = "phoneCall";
+    public static final String INTENT_PLAY_MUSIC = "playMusic";
     public static final String INTENT_INVALID_ACTION = "invalidAction";
     public static final String INTENT_NOT_SURE = "notSure";
 
@@ -55,8 +56,13 @@ public class Constants {
 
 
     // TO DO
-    public static final String KEY_TODO_MAKER_ID = "todoMakerId";
     public static final String KEY_TODO = "todo";
-    public static final String KEY_COLLECTION_TODO_LIST = "todolist";
+    public static final String KEY_TODO_STATUS = "todoStatus";
+    public static final String KEY_COLLECTION_TODO_LIST = "todo_list";
+
+    // TO DO
+    public static final String KEY_RECENT_ACTIVITY = "recentActivity";
+    public static final String KEY_RECENT_ACTIVITY_EXTRA = "recentActivityExtra";
+    public static final String KEY_COLLECTION_RECENT_ACTIVITY_LIST = "recent_activity_list";
 
 }

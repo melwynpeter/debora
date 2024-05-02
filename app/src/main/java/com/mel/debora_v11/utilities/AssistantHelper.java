@@ -1,22 +1,17 @@
 package com.mel.debora_v11.utilities;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
-import android.view.View;
 
 import androidx.lifecycle.ViewModelStoreOwner;
 
-import com.mel.debora_v11.adapters.TodoAdapter;
 import com.mel.debora_v11.api.Id;
 import com.mel.debora_v11.api.Item;
 import com.mel.debora_v11.api.YoutubeDataModel;
-import com.mel.debora_v11.models.Todo;
+import com.mel.debora_v11.utilities.database.TodoAdder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +54,7 @@ public class AssistantHelper {
         intents.add(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY);
         intents.add(Constants.INTENT_GENERAQA);
         intents.add(Constants.INTENT_PHONE_CALL);
+        intents.add(Constants.INTENT_PLAY_MUSIC);
         intents.add(Constants.INTENT_INVALID_ACTION);
         intents.add(Constants.INTENT_NOT_SURE);
         return intents;
@@ -174,6 +170,9 @@ public class AssistantHelper {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_PHONE_CALL, callRecepient, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_PHONE_CALL);
             response.put(Constants.RESPONSE_EXTRA, callRecepient);
+        }else if (intentPrediction.equals(Constants.INTENT_PLAY_MUSIC)){ // PHONE CALL
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_PLAY_MUSIC, viewModelStoreOwner));
+            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_PLAY_MUSIC);
         }
         else{
             response.put(Constants.RESPONSE, "Sorry couldn't discern what you're trying to say");
@@ -194,6 +193,8 @@ public class AssistantHelper {
             openYoutubeAndPlay(prompt);
         }else if(intent.equals(Constants.INTENT_PHONE_CALL)){
             makeCall(prompt);
+        }else if(intent.equals(Constants.INTENT_PLAY_MUSIC)){
+            playMusic(prompt);
         }
         return "";
     }
@@ -335,6 +336,14 @@ public class AssistantHelper {
         return success;
 
     }
+
+    // PLAY MUSIC TODO: PLAY MUSIC**
+    private boolean playMusic(String songName){
+        boolean success = false;
+
+        return success;
+    }
+
 
 
 
