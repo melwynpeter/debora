@@ -26,8 +26,8 @@ public class Constants {
 
     public static final String INTENT_GREETING = "greeting";
     public static final String INTENT_GOODBYE = "goodbye";
-    public static final String INTENT_CREATOR_OF_MODEL = "yourCreator";
-    public static final String INTENT_NAME_OF_MODEL = "yourName";
+    public static final String INTENT_CREATOR_OF_MODEL = "modelCreator";
+    public static final String INTENT_NAME_OF_MODEL = "modelName";
     public static final String INTENT_GENERATE_TEXT = "generateText";
     public static final String INTENT_GENERATE_TEXT_WITHOUT_SUBJECT = "generateTextWithSubject";
     public static final String INTENT_GENERATE_EMAIL = "generateEmail";
@@ -36,10 +36,13 @@ public class Constants {
     public static final String INTENT_ALARM_WITHOUT_TIME = "alarmWithoutTime";
     public static final String INTENT_TIMER = "timer";
     public static final String INTENT_TIMER_WITHOUT_TIME = "timerWithoutTime";
+    public static final String INTENT_REMINDER = "reminder";
+    public static final String INTENT_TODO = "todo";
     public static final String INTENT_OPEN_YOUTUBE = "openYoutube";
     public static final String INTENT_OPEN_YOUTUBE_AND_PLAY = "openYoutubeAndPlay";
     public static final String INTENT_WHATSAPP = "whatsapp";
     public static final String INTENT_GENERAQA = "generalQA";
+    public static final String INTENT_PHONE_CALL = "phoneCall";
     public static final String INTENT_INVALID_ACTION = "invalidAction";
     public static final String INTENT_NOT_SURE = "notSure";
 
@@ -48,7 +51,12 @@ public class Constants {
     public static final String NEEDS_DIALOG = "hasDialog";
     public static final String RESPONSE = "reponse";
     public static final String RESPONSE_INTENT = "reponseIntent";
+    public static final String RESPONSE_EXTRA = "reponseExtra";
 
 
+    // TO DO
+    public static final String KEY_TODO_MAKER_ID = "todoMakerId";
+    public static final String KEY_TODO = "todo";
+    public static final String KEY_COLLECTION_TODO_LIST = "todolist";
 
 }

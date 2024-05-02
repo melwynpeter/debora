@@ -156,7 +156,7 @@ class TextGenerationKotlin {
             truncated = "..."
         )
 
-        val selectPrompt = "select response of: {$prompt} from {$responseString}, return only selected response response"
+        val selectPrompt = "select response of: {$prompt} from {$responseString}, return only selected response"
         val response = generativeModel.generateContent(selectPrompt)
         var fullResponse = response.text ?: ""
         print(response.text)
@@ -170,11 +170,41 @@ class TextGenerationKotlin {
             apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
         )
 
-        val timePrompt = "extract time to set alarm or timer from {$prompt}, return only time as string in [hh:mm:ss] format, else if(time not available) return only null"
+        val timePrompt = "extract time to set alarm or timer from {$prompt}, return only time as string in [hh:mm:ss] format, else (if cannot be extracted) return only null"
         val response = generativeModel.generateContent(timePrompt)
         var fullResponse = response.text ?: ""
         print(response.text)
         Log.d(TAG, "extractTime: " + response.text)
+        return fullResponse
+    }
+    suspend fun extractTimeAndRemind(prompt: String, owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+
+        val timeAndRemindPrompt = "extract time and subject to set reminder from {$prompt}, return only time and subject as string to set reminder, comma seperated, else (if cannot be extracted) return only null"
+        val response = generativeModel.generateContent(timeAndRemindPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        Log.d(TAG, "extractTime: " + response.text)
+        return fullResponse
+    }
+    suspend fun extractTodo(prompt: String, owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+
+        val todoPrompt = "extract todo from {$prompt}, return only todo as string to add to todolist, else (if cannot be extracted) return only null as string"
+        val response = generativeModel.generateContent(todoPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        Log.d(TAG, "extractTodo: " + response.text)
         return fullResponse
     }
     suspend fun extractYoutubeVideoQuery(prompt: String, owner: ViewModelStoreOwner): String{
@@ -193,6 +223,22 @@ class TextGenerationKotlin {
         return fullResponse
     }
 
+    suspend fun extractCallRecipient(prompt: String, owner: ViewModelStoreOwner): String{
+        val generativeModel = GenerativeModel(
+            // For text-only input, use the gemini-pro model
+            modelName = "gemini-pro",
+            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
+            apiKey = "AIzaSyAjCuGfdg10DZMFKroXA0n95051Lgu0Q3o"
+        )
+
+        val callRecipientPrompt = "extract call recipient from {$prompt}, return only call recipient, else (if cannot be extracted) return only null"
+        val response = generativeModel.generateContent(callRecipientPrompt)
+        var fullResponse = response.text ?: ""
+        print(response.text)
+        Log.d(TAG, "extractedCallRecipient: " + response.text)
+        return fullResponse
+    }
+
 
 
 
@@ -203,7 +249,10 @@ class TextGenerationKotlin {
     fun generalQATaskAsync(prompt: String, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { generalQATask(prompt, owner) }
     fun selectResponseAsync(prompt: String, responses: ArrayList<String>, owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { selectResponse(prompt, responses, owner) }
     fun extractTimeAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractTime(prompt, owner) }
+    fun extractTimeAndRemindAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractTimeAndRemind(prompt, owner) }
+    fun extractTodoAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractTodo(prompt, owner) }
     fun extractYoutubeVideoQueryAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractYoutubeVideoQuery(prompt, owner) }
+    fun extractCallRecipientAsync(prompt: String,  owner: ViewModelStoreOwner): CompletableFuture<String> = GlobalScope.future { extractCallRecipient(prompt, owner) }
 
 
 

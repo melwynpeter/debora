@@ -31,6 +31,7 @@ import com.mel.debora_v11.fragments.AccountFragment;
 import com.mel.debora_v11.fragments.HistoryFragment;
 import com.mel.debora_v11.fragments.HomeFragment;
 import com.mel.debora_v11.fragments.RoutineFragment;
+import com.mel.debora_v11.utilities.AlarmService;
 import com.mel.debora_v11.utilities.AudioClassificationHelper;
 import com.mel.debora_v11.utilities.AudioClassificationListener;
 import com.mel.debora_v11.utilities.Constants;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!results.isEmpty() && results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.950000) {
+                    if (!results.isEmpty() && results.get(0) != null && results.get(0).getLabel().equals("debora") && results.get(0).getScore() > 0.900000) {
                         audioHelper.stopAudioClassification();
                         Toast.makeText(MainActivity.this, results.get(0).getScore() + "", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(MainActivity.this, AssistantActivity.class));
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
         replaceFragment(new HomeFragment());
 
 
+        // Alarm receiver
+        startService(new Intent(this, AlarmService.class));
 
         }
 

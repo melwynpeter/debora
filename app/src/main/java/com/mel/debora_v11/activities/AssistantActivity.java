@@ -28,7 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mel.debora_v11.R;
-import com.mel.debora_v11.databinding.ActivityAudioBinding;
+import com.mel.debora_v11.databinding.ActivityAssistantBinding;
 import com.mel.debora_v11.utilities.AssistantHelper;
 import com.mel.debora_v11.utilities.AudioClassificationHelper;
 import com.mel.debora_v11.utilities.Constants;
@@ -42,7 +42,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class AssistantActivity extends AppCompatActivity implements OnTimerTickListener {
 
-    private ActivityAudioBinding binding;
+    private ActivityAssistantBinding binding;
 
     private final int RECORD_AUDIO_REQUEST_CODE = 100;
 
@@ -73,7 +73,7 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityAudioBinding.inflate(getLayoutInflater());
+        binding = ActivityAssistantBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
@@ -236,7 +236,7 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
 
     private String sendData(String prompt){
         prompt = prompt.toLowerCase();
-        AssistantHelper assistantHelper = new AssistantHelper();
+        AssistantHelper assistantHelper = new AssistantHelper(this);
         assistantResponse = assistantHelper.getResponse(prompt, this);
 
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
@@ -249,6 +249,7 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
         });
         String response = assistantResponse.get(Constants.RESPONSE);
         String needsDialog = assistantResponse.get(Constants.NEEDS_DIALOG);
+        String responseExtra = assistantResponse.get(Constants.RESPONSE_EXTRA);
 
         String finalPrompt = prompt;
         future.thenAccept((result) -> {
@@ -274,9 +275,9 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
                     });
                     future1.join();
             }
-            else if (assistantResponse != null && needsDialog != null && needsDialog.equals("false")){
+            else if (assistantResponse != null && responseExtra != null && !responseExtra.equals("false")){
 
-                getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+                getTask(assistantResponse.get(Constants.RESPONSE_INTENT), responseExtra);
                 finish();
 
 //                String taskString = getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
@@ -294,6 +295,11 @@ public class AssistantActivity extends AppCompatActivity implements OnTimerTickL
 //                        });
 //                    });
 //                    future1.join();
+            }else if (assistantResponse != null && needsDialog != null && needsDialog.equals("false")){
+
+                getTask(assistantResponse.get(Constants.RESPONSE_INTENT), finalPrompt);
+                finish();
+
             }
             else{
                 finish();

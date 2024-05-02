@@ -1,5 +1,8 @@
 package com.mel.debora_v11.utilities;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +12,11 @@ import android.view.View;
 
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.mel.debora_v11.adapters.TodoAdapter;
 import com.mel.debora_v11.api.Id;
 import com.mel.debora_v11.api.Item;
 import com.mel.debora_v11.api.YoutubeDataModel;
+import com.mel.debora_v11.models.Todo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +37,9 @@ public class AssistantHelper {
 
     private Context context;
 
+    private String videoQuery = "";
+    private String callRecepient = "";
+
     public AssistantHelper(){}
     public AssistantHelper(Context context){
         this.context = context;
@@ -43,14 +51,14 @@ public class AssistantHelper {
         intents.add(Constants.INTENT_NAME_OF_MODEL);
         intents.add(Constants.INTENT_GENERATE_EMAIL);
         intents.add(Constants.INTENT_GENERATE_TEXT);
-        intents.add(Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT);
         intents.add(Constants.INTENT_ALARM);
-        intents.add(Constants.INTENT_ALARM_WITHOUT_TIME);
         intents.add(Constants.INTENT_TIMER);
-        intents.add(Constants.INTENT_TIMER_WITHOUT_TIME);
+        intents.add(Constants.INTENT_REMINDER);
+        intents.add(Constants.INTENT_TODO);
         intents.add(Constants.INTENT_OPEN_YOUTUBE);
         intents.add(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY);
         intents.add(Constants.INTENT_GENERAQA);
+        intents.add(Constants.INTENT_PHONE_CALL);
         intents.add(Constants.INTENT_INVALID_ACTION);
         intents.add(Constants.INTENT_NOT_SURE);
         return intents;
@@ -60,6 +68,7 @@ public class AssistantHelper {
         HashMap<String, String> response = new HashMap<>();
         response.put(Constants.NEEDS_DIALOG, "false");
         response.put(Constants.RESPONSE_INTENT, "false");
+        response.put(Constants.RESPONSE_EXTRA, "false");
 
         String intentPrediction = textClassification(prompt, getIntents(), viewModelStoreOwner);
         Log.d(TAG, "getResponse: " + intentPrediction);
@@ -84,65 +93,87 @@ public class AssistantHelper {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_GENERATE_TEXT);
 
-        } else if (intentPrediction.equals(Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT)) { // GENERATE_TEXT_WITHOUT_SUBJECT
-            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT, viewModelStoreOwner));
-            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_GENERATE_TEXT_WITHOUT_SUBJECT);
-
         } else if (intentPrediction.equals(Constants.INTENT_GENERATE_EMAIL)) { // GENERATE TEXT
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_GENERATE_EMAIL);
 
-        } else if (intentPrediction.equals(Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT)) {
-            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT, viewModelStoreOwner));
-            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_GENERATE_EMAIL_WITH_SUBJECT);
-
-        } else if (intentPrediction.equals(Constants.INTENT_ALARM)) { //SET ALARM
+        }  else if (intentPrediction.equals(Constants.INTENT_ALARM)) { //SET ALARM
             String time = extractTime(prompt, viewModelStoreOwner);
             if(time != null) {
                 if (setAlarm(time)) {
                     Log.d(TAG, "getResponse: " + time);
-                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM, viewModelStoreOwner));
+                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM, time, viewModelStoreOwner));
                     response.put(Constants.RESPONSE_INTENT, Constants.INTENT_ALARM);
 
                 } else {
                     response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
                 }
-            } else {
+            } else if(time.contains("null") || time.contains(":")) {
                 response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner));
                 response.put(Constants.RESPONSE_INTENT, Constants.INTENT_ALARM_WITHOUT_TIME);
             }
-        } else if (intentPrediction.equals(Constants.INTENT_ALARM_WITHOUT_TIME)) {
-            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner));
-            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_ALARM_WITHOUT_TIME);
-        }  else if (intentPrediction.equals(Constants.INTENT_TIMER)) {
-            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER, viewModelStoreOwner));
-            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_TIMER);
-
-        } else if (intentPrediction.equals(Constants.INTENT_TIMER_WITHOUT_TIME)) {
+        } else if (intentPrediction.equals(Constants.INTENT_TIMER)) { // TIMER
             String time = extractTime(prompt, viewModelStoreOwner);
-            if(setTimer(time)){
+            if(time != null) {
+                if (setTimer(time)) {
+                    Log.d(TAG, "getResponse: " + time);
+                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER, time, viewModelStoreOwner));
+                    response.put(Constants.RESPONSE_INTENT, Constants.INTENT_TIMER);
+
+                } else {
+                    response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
+                }
+            } else if(time.contains("null") || time.contains(":")) {
                 response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER_WITHOUT_TIME, viewModelStoreOwner));
                 response.put(Constants.RESPONSE_INTENT, Constants.INTENT_TIMER_WITHOUT_TIME);
-
-            }else{
-                response.put(Constants.RESPONSE, "sorry, couldn't set a timer");
             }
-        } else if (intentPrediction.equals(Constants.INTENT_OPEN_YOUTUBE)) {
+
+        }else if (intentPrediction.equals(Constants.INTENT_REMINDER)) { // REMINDER
+            String time = extractTimeAndRemind(prompt, viewModelStoreOwner);
+            if(time != null) {
+                if (setReminder(time)) {
+                    Log.d(TAG, "getResponse: " + time);
+                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_REMINDER, time, viewModelStoreOwner));
+                    response.put(Constants.RESPONSE_INTENT, Constants.INTENT_REMINDER);
+
+                } else {
+                    response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
+                }
+            }
+        } else if (intentPrediction.equals(Constants.INTENT_TODO)) { // REMINDER
+            String todo = extractTodo(prompt, viewModelStoreOwner);
+            if(todo != null) {
+                if (addTodo(todo)) {
+                    Log.d(TAG, "getResponse: " + todo);
+                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TODO, todo, viewModelStoreOwner));
+                    response.put(Constants.RESPONSE_INTENT, Constants.INTENT_TODO);
+
+                } else {
+                    response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
+                }
+            }
+        } else if (intentPrediction.equals(Constants.INTENT_OPEN_YOUTUBE)) { // OPEN YOUTUBE
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_OPEN_YOUTUBE, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_OPEN_YOUTUBE);
 
-        } else if (intentPrediction.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)) {
-            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY, viewModelStoreOwner));
+        } else if (intentPrediction.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)) { // OPEN YOUTUBE AND PLAY
+            videoQuery = extractYoutubeVideoQuery(prompt, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY, videoQuery, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY);
-
+            response.put(Constants.RESPONSE_EXTRA, videoQuery);
         } else if (intentPrediction.equals(Constants.INTENT_WHATSAPP)) {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_WHATSAPP, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_WHATSAPP);
 
-        } else if (intentPrediction.equals(Constants.INTENT_GENERAQA)){
+        } else if (intentPrediction.equals(Constants.INTENT_GENERAQA)){ // GENERAL QA
             response.put(Constants.NEEDS_DIALOG, "true");
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_GENERAQA, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_GENERAQA);
+        } else if (intentPrediction.equals(Constants.INTENT_PHONE_CALL)){ // PHONE CALL
+            callRecepient = extractCallRecipient(prompt, viewModelStoreOwner);
+            response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_PHONE_CALL, callRecepient, viewModelStoreOwner));
+            response.put(Constants.RESPONSE_INTENT, Constants.INTENT_PHONE_CALL);
+            response.put(Constants.RESPONSE_EXTRA, callRecepient);
         }
         else{
             response.put(Constants.RESPONSE, "Sorry couldn't discern what you're trying to say");
@@ -160,7 +191,9 @@ public class AssistantHelper {
         }else if(intent.equals(Constants.INTENT_OPEN_YOUTUBE)){
             openYoutube();
         }else if(intent.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)){
-            openYoutubeAndPlay(prompt, viewModelStoreOwner);
+            openYoutubeAndPlay(prompt);
+        }else if(intent.equals(Constants.INTENT_PHONE_CALL)){
+            makeCall(prompt);
         }
         return "";
     }
@@ -195,6 +228,14 @@ public class AssistantHelper {
         response = select(prompt, intentResponses,  viewModelStoreOwner);
         return response;
     }
+    private String getTextResponse(String prompt, String intent, String replaceString, ViewModelStoreOwner viewModelStoreOwner) {
+        String response = "";
+        Responses responses = new Responses();
+        ArrayList<String> intentResponses = responses.getResponses(intent);
+        response = select(prompt, intentResponses,  viewModelStoreOwner);
+        String swappedResponse = swapString(response, replaceString);
+        return swappedResponse;
+    }
 
     // GENERATE TEXT
     private String generateText(String prompt, ViewModelStoreOwner viewModelStoreOwner){
@@ -225,13 +266,58 @@ public class AssistantHelper {
 
     // SET ALARM
     private boolean setAlarm(String time){
-        boolean success = true;
+        boolean success = false;
+        AlarmController alarmController = new AlarmController(context);
+        if(alarmController.setAlarm(time)){
+            success = true;
+        }
         return success;
     }
 
     // SET TIMER
     private boolean setTimer(String time){
         boolean success = false;
+        TimerController timerController = new TimerController(context);
+        if(timerController.setTimer(time)){
+            success = true;
+        }
+        return success;
+    }
+
+    // SET REMINDER
+    private boolean setReminder(String timeAndRemind){
+        boolean success = false;
+        String timeAndRemindArray[] = new String[2];
+        String time = "";
+        if(timeAndRemind.contains(",")) {
+            timeAndRemindArray = timeAndRemind.split(",");
+            if(timeAndRemindArray[0].contains("seconds")){
+                time = timeAndRemindArray[0].replace(" seconds", "");
+                time = "00:00:" + time;
+            }
+        }
+
+        if(time != ""){
+        ReminderController reminderController = new ReminderController(context);
+            if(reminderController.setReminder(time)){
+                success = true;
+            }
+        }
+        return success;
+    }
+    private boolean addTodo(String todo){
+        boolean success = false;
+        TodoAdder todoAdder = new TodoAdder(context);
+        if(todoAdder.addTodo(todo)){
+         success = true;
+        }
+        return success;
+    }
+
+    private boolean makeCall(String call){
+        boolean success = false;
+        Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+90223 + "" + 64183));
+        context.startActivity(callIntent);
         return success;
     }
 
@@ -243,10 +329,9 @@ public class AssistantHelper {
     }
 
     // OPEN YOUTUBE AND PLAY
-    private boolean openYoutubeAndPlay(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+    private boolean openYoutubeAndPlay(String videoQuery){
         boolean success = false;
-        String extractedYoutubeVideoQuery = extractYoutubeVideoQuery(prompt, viewModelStoreOwner);
-        callApi(extractedYoutubeVideoQuery);
+        callApi(videoQuery);
         return success;
 
     }
@@ -288,6 +373,44 @@ public class AssistantHelper {
             return null;
         }
     }
+    private String extractTimeAndRemind(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        String time = "";
+        CompletableFuture<String> extractedTimeAndRemind = t.extractTimeAndRemindAsync(prompt, viewModelStoreOwner);
+        try {
+            time = extractedTimeAndRemind.get();
+            Log.d(TAG, "extractTimeAndRemind: " + time);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d(TAG, "extractTimeAndRemind: " + time);
+
+        if(!time.equals("null")){
+            return time;
+        }else{
+            return null;
+        }
+    }
+    private String extractTodo(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        String todo = "";
+        CompletableFuture<String> extractedTodo = t.extractTodoAsync(prompt, viewModelStoreOwner);
+        try {
+            todo = extractedTodo.get();
+            Log.d(TAG, "extractedTodo: " + todo);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d(TAG, "extractedTodo: " + todo);
+
+        if(!todo.equals("null")){
+            return todo;
+        }else{
+            return null;
+        }
+    }
 
     private String extractYoutubeVideoQuery(String prompt, ViewModelStoreOwner viewModelStoreOwner){
         String youtubeVideoQuery = "";
@@ -308,11 +431,30 @@ public class AssistantHelper {
             return null;
         }
     }
+    private String extractCallRecipient(String prompt, ViewModelStoreOwner viewModelStoreOwner){
+        String callRecipient = "";
+        CompletableFuture<String> extractedCallRecipient = t.extractCallRecipientAsync(prompt, viewModelStoreOwner);
+        try {
+            callRecipient = extractedCallRecipient.get();
+            Log.d(TAG, "extractTime: " + callRecipient);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d(TAG, "extractYoutubeQuery: " + callRecipient);
+
+        if(!callRecipient.equals("null")){
+            return callRecipient;
+        }else{
+            return null;
+        }
+    }
 
 
     // youtube api
     private void callApi(String query){
-        query = "great are you lord by micheal smith";
+//        query = (query == null)? "great are you lord by micheal smith" : query;
         Call<YoutubeDataModel> YoutubeDataCall = ApiController.getInstance()
                 .getApi()
                 .getYoutubeSearch(
@@ -322,6 +464,8 @@ public class AssistantHelper {
                         "snippet",
                         "video"
                 );
+
+        Log.d(TAG, "callApi: " + query);
 
         YoutubeDataCall.enqueue(new Callback<YoutubeDataModel>() {
             @Override
@@ -356,6 +500,22 @@ public class AssistantHelper {
             context.startActivity(webIntent);
         }
     }
+
+    private String swapString(String response, String replaceString){
+        if(response.contains("{time}")){
+            response = response.replace("{time}", replaceString);
+        }
+        else if (response.contains("{videoQuery}")){
+            response = response.replace("{videoQuery}", replaceString);
+        }
+        else if (response.contains("{callRecipient}")){
+            response = response.replace("{callRecipient}", replaceString);
+        }else if (response.contains("{todo}")){
+            response = response.replace("{todo}", replaceString);
+        }
+        return response;
+    }
+
 
 }
 

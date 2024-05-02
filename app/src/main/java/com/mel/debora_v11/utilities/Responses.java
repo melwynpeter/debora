@@ -48,6 +48,7 @@ public class Responses {
             generateTextResponses.add("sure");
             generateTextResponses.add("sure, right away");
             generateTextResponses.add("here it is");
+            generateTextResponses.add("generating text about {subject}");
             generateTextResponses.add("generating");
             generateTextResponses.add("generating text");
             generateTextResponses.add("creating");
@@ -91,69 +92,78 @@ public class Responses {
             generateEmailWithSubjectResponses.add("sure, generating");
             generateEmailWithSubjectResponses.add("sure, creating");
             return generateEmailWithSubjectResponses;
-        }else if (intent.equals(Constants.INTENT_ALARM)) {
-            // ALARM
-            // SET AN ALARM
+        }else if (intent.equals(Constants.INTENT_ALARM)) { // SET AN ALARM
             ArrayList<String> setAlarmResponse = new ArrayList<>();
-            setAlarmResponse.add("sure... alarm set for");
-            setAlarmResponse.add("sure, right away... set an alarm for");
-            setAlarmResponse.add("set an alarm for");
+            setAlarmResponse.add("sure... alarm set for {time}");
+            setAlarmResponse.add("sure, right away... set an alarm for {time}");
+            setAlarmResponse.add("set an alarm for {time}");
             return setAlarmResponse;
-        }else if (intent.equals(Constants.INTENT_ALARM_WITHOUT_TIME)) {
-            // SET AN ALARM WITH TIME
+        }else if (intent.equals(Constants.INTENT_ALARM_WITHOUT_TIME)) { // ALARM WITHOUT TIME
             ArrayList<String> setAlarmWithoutTimeResponses = new ArrayList<>();
             setAlarmWithoutTimeResponses.add("please specify a time");
             setAlarmWithoutTimeResponses.add("please specify a time to set an alarm");
             setAlarmWithoutTimeResponses.add("specify a time");
             setAlarmWithoutTimeResponses.add("specify a time to set an alarm");
             return setAlarmWithoutTimeResponses;
-        }else if (intent.equals(Constants.INTENT_TIMER)) {
-            // TIMER
-            // SET A TIMER
+        }else if (intent.equals(Constants.INTENT_TIMER)) { // SET A TIMER
             ArrayList<String> setTimerResponses = new ArrayList<>();
-            setTimerResponses.add("sure... timer set for");
-            setTimerResponses.add("sure, right away... set an timer for");
-            setTimerResponses.add("set an timer for");
+            setTimerResponses.add("sure... timer set for {time}");
+            setTimerResponses.add("sure, right away... set a timer for {time}");
+            setTimerResponses.add("set a timer for {time}");
             return setTimerResponses;
-        }else if (intent.equals(Constants.INTENT_TIMER_WITHOUT_TIME)) {
-            // SET AN TIMER WITH TIME
+        }else if (intent.equals(Constants.INTENT_TIMER_WITHOUT_TIME)) { // TIMER WITHOUT TIME
             ArrayList<String> setTimerWithoutTimerResponses = new ArrayList<>();
             setTimerWithoutTimerResponses.add("please specify a time");
             setTimerWithoutTimerResponses.add("please specify a time to set a timer");
             setTimerWithoutTimerResponses.add("specify a time");
             setTimerWithoutTimerResponses.add("specify a time to set a timer");
             return setTimerWithoutTimerResponses;
-        }else if (intent.equals(Constants.INTENT_OPEN_YOUTUBE)) {
-            // EXTERNAL APPS
-            // OPEN YOUTUBE
+        }else if (intent.equals(Constants.INTENT_REMINDER)) { // REMINDER
+            ArrayList<String> setReminderResponses = new ArrayList<>();
+//            setReminderResponses.add("sure... reminder set for {time}");
+//            setReminderResponses.add("sure, right away... set reminder for {time}");
+//            setReminderResponses.add("set an timer for {time}");
+            setReminderResponses.add("okay, ill remind you...");
+            setReminderResponses.add("sure, ill remind you about {remind}");
+            setReminderResponses.add("sure, ill remind you about {remind} {time}");
+            setReminderResponses.add("sure, ill remind you about {remind} in {time}");
+            setReminderResponses.add("sure, ill remind you about {remind} at {time}");
+            return setReminderResponses;
+        }else if (intent.equals(Constants.INTENT_TODO)) { // TO DO
+            ArrayList<String> addTodoResponses = new ArrayList<>();
+            addTodoResponses.add("todo added...");
+            addTodoResponses.add("{todo} added to todo list");
+            addTodoResponses.add("todo created");
+            return addTodoResponses;
+        }else if (intent.equals(Constants.INTENT_OPEN_YOUTUBE)) { // OPEN YOUTUBE
             ArrayList<String> openYoutubeResponses = new ArrayList<>();
             openYoutubeResponses.add("sure, opening youtube");
             openYoutubeResponses.add("opening youtube");
             return openYoutubeResponses;
-        }else if (intent.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)) {
-            // EXTERNAL APPS
-            // OPEN YOUTUBE AND PLAY
+        }else if (intent.equals(Constants.INTENT_OPEN_YOUTUBE_AND_PLAY)) { // OPEN YOUTUBE AND PLAY
             ArrayList<String> openYoutubeAndPlayResponses = new ArrayList<>();
             openYoutubeAndPlayResponses.add("sure, playing {videoQuery} on Youtube");
             openYoutubeAndPlayResponses.add("playing {videoQuery} on Youtube");
             openYoutubeAndPlayResponses.add("opening youtube, and playing {videoQuery}");
             openYoutubeAndPlayResponses.add("opening youtube, and playing videos about {videoQuery}");
             return openYoutubeAndPlayResponses;
-        }else if (intent.equals(Constants.INTENT_WHATSAPP)) {
-            // EXTERNAL APPS
-            // OPEN WHATSAPP
+        }else if (intent.equals(Constants.INTENT_WHATSAPP)) { // OPEN WHATSAPP
             ArrayList<String> openWhatsappResponses = new ArrayList<>();
             openWhatsappResponses.add("sure, opening whatsapp");
             openWhatsappResponses.add("opening whatsapp");
             return openWhatsappResponses;
-        }else if (intent.equals(Constants.INTENT_GENERAQA)) {
-            // GENERAL QA
+        }else if (intent.equals(Constants.INTENT_GENERAQA)) { // GENERAL QA
             ArrayList<String> generalQAResponses = new ArrayList<>();
             generalQAResponses.add("sure, here is some information about ");
             generalQAResponses.add("here is some information about");
             generalQAResponses.add("information about");
             generalQAResponses.add("sure");
             return generalQAResponses;
+        }else if (intent.equals(Constants.INTENT_PHONE_CALL)) { // MAKE CALL
+            ArrayList<String> makeCallResponses = new ArrayList<>();
+            makeCallResponses.add("calling {callRecipient} ");
+            makeCallResponses.add("sure, calling {callRecipient}");
+            return makeCallResponses;
         }
 
 
