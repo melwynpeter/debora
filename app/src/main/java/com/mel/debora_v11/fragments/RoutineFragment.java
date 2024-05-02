@@ -11,11 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mel.debora_v11.R;
+import com.mel.debora_v11.activities.subactivities.AlarmManagerActivity;
+import com.mel.debora_v11.activities.subactivities.GeneralQAActivity;
+import com.mel.debora_v11.activities.subactivities.GeneratedTextsActivity;
+import com.mel.debora_v11.activities.subactivities.ReminderActivity;
+import com.mel.debora_v11.activities.subactivities.TimerManagerActivity;
 import com.mel.debora_v11.activities.subactivities.TodoActivity;
 import com.mel.debora_v11.adapters.CardAdapter;
 import com.mel.debora_v11.databinding.FragmentHomeBinding;
 import com.mel.debora_v11.databinding.FragmentRoutineBinding;
 import com.mel.debora_v11.models.Card;
+import com.mel.debora_v11.models.GeneralQA;
 import com.mel.debora_v11.utilities.Constants;
 import com.mel.debora_v11.utilities.PreferenceManager;
 
@@ -53,31 +59,31 @@ public class RoutineFragment extends Fragment {
         binding.generatedTexts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), GeneratedTextsActivity.class));
             }
         });
         binding.qas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), GeneralQAActivity.class));
             }
         });
         binding.alarms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), AlarmManagerActivity.class));
             }
         });
         binding.timers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), TimerManagerActivity.class));
             }
         });
         binding.reminders.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(getActivity(), ReminderActivity.class));
             }
         });
         binding.todos.setOnClickListener(new View.OnClickListener() {

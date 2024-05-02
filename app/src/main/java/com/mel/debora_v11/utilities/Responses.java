@@ -154,9 +154,9 @@ public class Responses {
             return openWhatsappResponses;
         }else if (intent.equals(Constants.INTENT_GENERAQA)) { // GENERAL QA
             ArrayList<String> generalQAResponses = new ArrayList<>();
-            generalQAResponses.add("sure, here is some information about ");
-            generalQAResponses.add("here is some information about");
-            generalQAResponses.add("information about");
+            generalQAResponses.add("sure, here is some information about {question}");
+            generalQAResponses.add("here is some information about {question}");
+            generalQAResponses.add("information about {question}");
             generalQAResponses.add("sure");
             return generalQAResponses;
         }else if (intent.equals(Constants.INTENT_PHONE_CALL)) { // MAKE CALL

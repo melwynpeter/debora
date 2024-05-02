@@ -32,9 +32,9 @@ public class Constants {
     public static final String INTENT_GENERATE_TEXT_WITHOUT_SUBJECT = "generateTextWithSubject";
     public static final String INTENT_GENERATE_EMAIL = "generateEmail";
     public static final String INTENT_GENERATE_EMAIL_WITH_SUBJECT = "generateEmailWithSubject";
-    public static final String INTENT_ALARM = "alarm";
+    public static final String INTENT_ALARM = "setAlarm";
     public static final String INTENT_ALARM_WITHOUT_TIME = "alarmWithoutTime";
-    public static final String INTENT_TIMER = "timer";
+    public static final String INTENT_TIMER = "setTimer";
     public static final String INTENT_TIMER_WITHOUT_TIME = "timerWithoutTime";
     public static final String INTENT_REMINDER = "reminder";
     public static final String INTENT_TODO = "todo";
@@ -60,9 +60,35 @@ public class Constants {
     public static final String KEY_TODO_STATUS = "todoStatus";
     public static final String KEY_COLLECTION_TODO_LIST = "todo_list";
 
-    // TO DO
+    // RECENTS
     public static final String KEY_RECENT_ACTIVITY = "recentActivity";
     public static final String KEY_RECENT_ACTIVITY_EXTRA = "recentActivityExtra";
     public static final String KEY_COLLECTION_RECENT_ACTIVITY_LIST = "recent_activity_list";
+
+
+    // ALARM
+    public static final String KEY_ALARM = "alarm";
+    public static final String KEY_ALARM_STATUS = "alarmStatus";
+    public static final String KEY_COLLECTION_ALARM = "alarm_list";
+
+    // TIMER
+    public static final String KEY_TIMER = "timer";
+    public static final String KEY_TIMER_STATUS = "timerStatus";
+    public static final String KEY_COLLECTION_TIMER = "timer_list";
+
+    // GENERATED TEXTS
+    public static final String KEY_GENERATED_TEXTS = "generatedTexts";
+    public static final String KEY_GENERATED_TEXTS_PROMPT = "generatedTextsPrompt";
+    public static final String KEY_COLLECTION_GENERATED_TEXTS_LIST = "generated_texts_list";
+
+    // GENERAL QA
+    public static final String KEY_GENERAL_QA_RESPONSE = "generalQAResponse";
+    public static final String KEY_GENERAL_QA_PROMPT = "generalQAPrompt";
+    public static final String KEY_COLLECTION_GENERAL_QA_LIST = "general_QA_list";
+
+    // REMINDER
+    public static final String KEY_REMINDER_TIME = "reminderTime";
+    public static final String KEY_REMINDER_TEXT = "reminderText";
+    public static final String KEY_COLLECTION_REMINDER_LIST = "reminder_list";
 
 }

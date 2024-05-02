@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.mel.debora_v11.utilities.database.TimerAdder;
+
 import java.util.Calendar;
 
 public class TimerController {
@@ -42,12 +44,12 @@ public class TimerController {
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    public boolean setTimer(String alarmTime){
+    public boolean setTimer(String timerTime){
 //        Calendar targetCal = getCalender(alarmTime);
 //        int time = Integer.parseInt(alarmTime);
 //        long triggerTime = System.currentTimeMillis() + (time * 1000);
 //        long setTriggerTime = targetCal.getTimeInMillis();
-        String timeArray[] = alarmTime.split(":");
+        String timeArray[] = timerTime.split(":");
         int hourOfDay = Integer.parseInt(timeArray[0]);
         int minute = Integer.parseInt(timeArray[1]);
         int seconds = Integer.parseInt(timeArray[2]);
@@ -68,6 +70,15 @@ public class TimerController {
         }catch (Exception e){
 
         }
+
+        // Add timer to database
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                TimerAdder timerAdder = new TimerAdder(context);
+                timerAdder.addTimer(timerTime);
+            }
+        }).start();
         return true;
     }
 }

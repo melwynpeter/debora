@@ -11,6 +11,10 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.mel.debora_v11.api.Id;
 import com.mel.debora_v11.api.Item;
 import com.mel.debora_v11.api.YoutubeDataModel;
+import com.mel.debora_v11.utilities.database.AlarmAdder;
+import com.mel.debora_v11.utilities.database.GeneralQAAdder;
+import com.mel.debora_v11.utilities.database.GeneratedTextsAdder;
+import com.mel.debora_v11.utilities.database.TimerAdder;
 import com.mel.debora_v11.utilities.database.TodoAdder;
 
 import java.util.ArrayList;
@@ -95,7 +99,7 @@ public class AssistantHelper {
 
         }  else if (intentPrediction.equals(Constants.INTENT_ALARM)) { //SET ALARM
             String time = extractTime(prompt, viewModelStoreOwner);
-            if(time != null) {
+            if(time != null && !time.equals("null")) {
                 if (setAlarm(time)) {
                     Log.d(TAG, "getResponse: " + time);
                     response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM, time, viewModelStoreOwner));
@@ -104,13 +108,13 @@ public class AssistantHelper {
                 } else {
                     response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
                 }
-            } else if(time.contains("null") || time.contains(":")) {
+            } else {
                 response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_ALARM_WITHOUT_TIME, viewModelStoreOwner));
                 response.put(Constants.RESPONSE_INTENT, Constants.INTENT_ALARM_WITHOUT_TIME);
             }
         } else if (intentPrediction.equals(Constants.INTENT_TIMER)) { // TIMER
             String time = extractTime(prompt, viewModelStoreOwner);
-            if(time != null) {
+            if(time != null && !time.equals("null")) {
                 if (setTimer(time)) {
                     Log.d(TAG, "getResponse: " + time);
                     response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER, time, viewModelStoreOwner));
@@ -119,26 +123,27 @@ public class AssistantHelper {
                 } else {
                     response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
                 }
-            } else if(time.contains("null") || time.contains(":")) {
+            } else {
                 response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TIMER_WITHOUT_TIME, viewModelStoreOwner));
                 response.put(Constants.RESPONSE_INTENT, Constants.INTENT_TIMER_WITHOUT_TIME);
             }
 
         }else if (intentPrediction.equals(Constants.INTENT_REMINDER)) { // REMINDER
             String time = extractTimeAndRemind(prompt, viewModelStoreOwner);
-            if(time != null) {
-                if (setReminder(time)) {
+            if(time != null && !time.equals("null")) {
+                String timeAndRemind[] = seperateTimeAndRemind(time);
+                if (setReminder(timeAndRemind[0], timeAndRemind[1])) {
                     Log.d(TAG, "getResponse: " + time);
-                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_REMINDER, time, viewModelStoreOwner));
+                    response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_REMINDER, timeAndRemind[1], viewModelStoreOwner));
                     response.put(Constants.RESPONSE_INTENT, Constants.INTENT_REMINDER);
 
                 } else {
                     response.put(Constants.RESPONSE, "sorry, couldn't set an alarm");
                 }
             }
-        } else if (intentPrediction.equals(Constants.INTENT_TODO)) { // REMINDER
+        } else if (intentPrediction.equals(Constants.INTENT_TODO)) { // TO DO
             String todo = extractTodo(prompt, viewModelStoreOwner);
-            if(todo != null) {
+            if(todo != null && !todo.equals("null")) {
                 if (addTodo(todo)) {
                     Log.d(TAG, "getResponse: " + todo);
                     response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_TODO, todo, viewModelStoreOwner));
@@ -157,7 +162,7 @@ public class AssistantHelper {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY, videoQuery, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_OPEN_YOUTUBE_AND_PLAY);
             response.put(Constants.RESPONSE_EXTRA, videoQuery);
-        } else if (intentPrediction.equals(Constants.INTENT_WHATSAPP)) {
+        } else if (intentPrediction.equals(Constants.INTENT_WHATSAPP)) { // WHATSAPP
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_WHATSAPP, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_WHATSAPP);
 
@@ -170,7 +175,7 @@ public class AssistantHelper {
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_PHONE_CALL, callRecepient, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_PHONE_CALL);
             response.put(Constants.RESPONSE_EXTRA, callRecepient);
-        }else if (intentPrediction.equals(Constants.INTENT_PLAY_MUSIC)){ // PHONE CALL
+        }else if (intentPrediction.equals(Constants.INTENT_PLAY_MUSIC)){ // PLAY MUSIC
             response.put(Constants.RESPONSE, getTextResponse(prompt, Constants.INTENT_PLAY_MUSIC, viewModelStoreOwner));
             response.put(Constants.RESPONSE_INTENT, Constants.INTENT_PLAY_MUSIC);
         }
@@ -249,6 +254,16 @@ public class AssistantHelper {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        String finalResponse = response;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GeneratedTextsAdder generatedTextsAdder = new GeneratedTextsAdder(context);
+                generatedTextsAdder.addGeneratedTexts(finalResponse, prompt);
+            }
+        }).start();
+
         return response;
     }
     // GENERAL QA
@@ -262,6 +277,15 @@ public class AssistantHelper {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        String finalResponse = response;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GeneralQAAdder generalQAAdder = new GeneralQAAdder(context);
+                generalQAAdder.addGeneralQA(finalResponse, prompt);
+            }
+        }).start();
         return response;
     }
 
@@ -269,8 +293,11 @@ public class AssistantHelper {
     private boolean setAlarm(String time){
         boolean success = false;
         AlarmController alarmController = new AlarmController(context);
-        if(alarmController.setAlarm(time)){
-            success = true;
+        if(!time.contains("null")){
+            if(alarmController.setAlarm(time)) {
+                success = true;
+            }
+
         }
         return success;
     }
@@ -279,24 +306,17 @@ public class AssistantHelper {
     private boolean setTimer(String time){
         boolean success = false;
         TimerController timerController = new TimerController(context);
-        if(timerController.setTimer(time)){
-            success = true;
+        if(!time.contains("null")){
+            if(timerController.setTimer(time)) {
+                success = true;
+            }
         }
         return success;
     }
 
     // SET REMINDER
-    private boolean setReminder(String timeAndRemind){
+    private boolean setReminder(String time, String remind){
         boolean success = false;
-        String timeAndRemindArray[] = new String[2];
-        String time = "";
-        if(timeAndRemind.contains(",")) {
-            timeAndRemindArray = timeAndRemind.split(",");
-            if(timeAndRemindArray[0].contains("seconds")){
-                time = timeAndRemindArray[0].replace(" seconds", "");
-                time = "00:00:" + time;
-            }
-        }
 
         if(time != ""){
         ReminderController reminderController = new ReminderController(context);
@@ -460,6 +480,18 @@ public class AssistantHelper {
         }
     }
 
+    private String[] seperateTimeAndRemind(String timeAndRemind){
+        String timeAndRemindArray[] = new String[2];
+        String time = "";
+        if(timeAndRemind.contains(",")) {
+            timeAndRemindArray = timeAndRemind.split(",");
+            if(timeAndRemindArray[0].contains("seconds")){
+                time = timeAndRemindArray[0].replace(" seconds", "");
+                time = "00:00:" + time;
+            }
+        }
+        return timeAndRemindArray;
+    }
 
     // youtube api
     private void callApi(String query){
@@ -521,6 +553,10 @@ public class AssistantHelper {
             response = response.replace("{callRecipient}", replaceString);
         }else if (response.contains("{todo}")){
             response = response.replace("{todo}", replaceString);
+        }else if (response.contains("{question}")){
+            response = response.replace("{question}", replaceString);
+        }else if (response.contains("{remind}")){
+            response = response.replace("{remind}", replaceString);
         }
         return response;
     }

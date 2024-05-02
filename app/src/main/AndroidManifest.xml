@@ -23,6 +23,21 @@
         android:theme="@style/Theme.Debora_v11"
         tools:targetApi="31">
         <activity
+            android:name=".activities.subactivities.ReminderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.subactivities.GeneralQAActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.subactivities.GeneratedTextsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.subactivities.TimerManagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.subactivities.AlarmManagerActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.subactivities.TodoActivity"
             android:exported="false" />
         <activity

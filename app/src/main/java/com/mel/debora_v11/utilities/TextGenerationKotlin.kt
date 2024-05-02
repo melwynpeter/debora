@@ -174,7 +174,7 @@ class TextGenerationKotlin {
         val response = generativeModel.generateContent(timePrompt)
         var fullResponse = response.text ?: ""
         print(response.text)
-        Log.d(TAG, "extractTime: " + response.text)
+        Log.d(TAG, "extractTime: *" + response.text)
         return fullResponse
     }
     suspend fun extractTimeAndRemind(prompt: String, owner: ViewModelStoreOwner): String{

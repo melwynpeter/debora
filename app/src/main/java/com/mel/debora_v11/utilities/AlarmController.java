@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.mel.debora_v11.utilities.database.AlarmAdder;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -68,8 +70,19 @@ public class AlarmController {
         try {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, setTriggerTime, pi);
         }catch (Exception e){
-
         }
+
+        // Add alarm to database
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AlarmAdder alarmAdder = new AlarmAdder(context);
+                alarmAdder.addAlarm(alarmTime);
+                Log.d(TAG, "run: alarm added to db");
+            }
+        }).start();
+
+
         return true;
     }
 }

@@ -51,9 +51,20 @@ public class TodoActivity extends AppCompatActivity {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         init();
         listenTodos();
+        setListeners();
 
 
         setContentView(binding.getRoot());
+    }
+
+    private void setListeners(){
+
+        binding.backArrowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void init(){
@@ -95,7 +106,7 @@ public class TodoActivity extends AppCompatActivity {
                 }
                 else{
                     todoAdapter.notifyItemRangeInserted(todos.size(), todos.size());
-                    binding.recyclerView.scrollToPosition(todos.size() - 1);
+                    binding.recyclerView.scrollToPosition(0);
                 }
                 binding.recyclerView.setVisibility(View.VISIBLE);
 
