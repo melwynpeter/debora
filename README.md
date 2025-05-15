@@ -40,3 +40,39 @@
 
 ## 📁 Project Structure (Simplified)
 
+Debora/
+├── app/
+│ ├── src/
+│ │ ├── main/
+│ │ │ ├── java/com/debora/
+│ │ │ │ ├── activities/
+│ │ │ │ ├── utils/
+│ │ │ │ ├── services/
+│ │ │ ├── kotlin/com/debora/
+│ │ │ │ ├── chat/
+│ │ │ │ ├── firebase/
+│ │ │ ├── res/layout/
+├── build.gradle
+
+
+
+## 📚 What I Learned
+
+- Real-world Android development with both Java and Kotlin  
+- Firebase integration for authentication and real-time data storage  
+- How to connect Gemini (LLM) API for dynamic AI responses  
+- Designing responsive, functional UIs  
+- Working with voice-based interfaces and custom speech models  
+- Managing multi-module, multi-language Android projects  
+
+---
+
+## 📌 Disclaimer
+
+This app was developed as a final-year project. While it showcases multiple advanced integrations, it’s not intended for commercial use.
+
+---
+
+## 📫 Contact
+
+If you’re curious about Debora or want to collaborate on similar projects, feel free to reach out via [LinkedIn](www.linkedin.com/in/melwyn-peter-5aa80134a)
