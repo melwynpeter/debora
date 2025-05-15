@@ -38,21 +38,6 @@
 
 ---
 
-## 📁 Project Structure (Simplified)
-
-Debora/
-├── app/
-│ ├── src/
-│ │ ├── main/
-│ │ │ ├── java/com/debora/
-│ │ │ │ ├── activities/
-│ │ │ │ ├── utils/
-│ │ │ │ ├── services/
-│ │ │ ├── kotlin/com/debora/
-│ │ │ │ ├── chat/
-│ │ │ │ ├── firebase/
-│ │ │ ├── res/layout/
-├── build.gradle
 
 
 
